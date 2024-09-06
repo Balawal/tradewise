@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ArrowLeftIcon } from 'react-native-heroicons/solid';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
-
 
 GoogleSignin.configure({
     webClientId: '413835240721-m5r9lq7deapq3esuti0un7fabt11l3du.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
@@ -31,13 +30,11 @@ export default function SignUpScreen() {
     const signIn = async () => {
         try {
           await GoogleSignin.hasPlayServices();
-          const response = await GoogleSignin.signIn();
-          if (isSuccessResponse(response)) {
-            setState({ userInfo: response.data });
-          } else {
-            // sign in was cancelled by user
-          }
+          const {idToken} = await GoogleSignin.signIn();
+          const googleCredentials = GoogleAuthProvider.credential(idToken);
+          await signInWithCredential(googleCredentials);
         } catch (error) {
+            console.log('got error: ', error.message);
           if (isErrorWithCode(error)) {
             switch (error.code) {
               case statusCodes.IN_PROGRESS:
@@ -56,12 +53,12 @@ export default function SignUpScreen() {
       };
     
     return(
-        <View className="flex-1 bg-indigo-400">
+        <View className="flex-1 bg-slate-950">
             <SafeAreaView className="flex">
                 <View className="flex-row justify-start">
                     <TouchableOpacity
                         onPress={()=> navigation.goBack()}
-                        className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+                        className="bg-sky-700 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
                     >
                         <ArrowLeftIcon size="20" color="black" />
                     </TouchableOpacity>
@@ -98,7 +95,7 @@ export default function SignUpScreen() {
                         placeholder="Enter Password"
                     />
                     <TouchableOpacity
-                        className="py-3 bg-yellow-400 rounded-xl"
+                        className="py-3 bg-sky-700 rounded-xl"
                         onPress={handleSubmit}
                     >
                         <Text className="font-xl font-bold text-center text-gray-700">
@@ -110,23 +107,27 @@ export default function SignUpScreen() {
                     Or
                 </Text>
                 <View className="flex-row justify-center space-x-12">
-                    <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
+                    
+                    <TouchableOpacity onPress={()=> signIn()} className="p-2 bg-gray-100 rounded-2xl">
                         <Image source={require('../assets/icons/google.png')}
                             className="w-10 h-10" />
                     </TouchableOpacity>
+                    
                     <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
                         <Image source={require('../assets/icons/facebook.png')}
                             className="w-10 h-10" />
                     </TouchableOpacity>
+                    
                     <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
                         <Image source={require('../assets/icons/apple-logo.png')}
                             className="w-10 h-10" />
                     </TouchableOpacity>
+                
                 </View>
                 <View className="flex-row justify-center mt-7">
                         <Text className="text-gray-500 font-semibold">Already have an account?</Text>
                         <TouchableOpacity onPress={()=> navigation.navigate('Login')}>
-                            <Text className="font-semibold text-yellow-500"> Login</Text>
+                            <Text className="font-semibold text-sky-700"> Login</Text>
                         </TouchableOpacity>
                     </View>
             </View>

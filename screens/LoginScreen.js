@@ -5,6 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 import { ArrowLeftIcon } from 'react-native-heroicons/solid';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+    webClientId: '413835240721-m5r9lq7deapq3esuti0un7fabt11l3du.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+   
+  });
 
 export default function LoginScreen() {
     const navigation = useNavigation();
@@ -19,13 +25,39 @@ export default function LoginScreen() {
             }
         }
     }
+
+    const signIn = async () => {
+        try {
+          await GoogleSignin.hasPlayServices();
+          const {idToken} = await GoogleSignin.signIn();
+          const googleCredentials = GoogleAuthProvider.credential(idToken);
+          await signInWithCredential(googleCredentials);
+        } catch (error) {
+            console.log('got error: ', error.message);
+          if (isErrorWithCode(error)) {
+            switch (error.code) {
+              case statusCodes.IN_PROGRESS:
+                // operation (eg. sign in) already in progress
+                break;
+              case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                // Android only, play services not available or outdated
+                break;
+              default:
+              // some other error happened
+            }
+          } else {
+            // an error that's not related to google sign in occurred
+          }
+        }
+      };
+
     return(
-        <View className="flex-1 bg-indigo-400">
+        <View className="flex-1 bg-slate-950">
             <SafeAreaView className="flex">
                 <View className="flex-row justify-start">
                     <TouchableOpacity
                         onPress={()=> navigation.goBack()}
-                        className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+                        className="bg-sky-700 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
                     >
                         <ArrowLeftIcon size="20" color="black" />
                     </TouchableOpacity>
@@ -59,7 +91,7 @@ export default function LoginScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={handleSubmit}
-                        className="py-3 bg-yellow-400 rounded-xl"
+                        className="py-3 bg-sky-700 rounded-xl"
                     >
                         <Text className="font-xl font-bold text-center text-gray-700">
                             Login
@@ -70,7 +102,7 @@ export default function LoginScreen() {
                     Or
                 </Text>
                 <View className="flex-row justify-center space-x-12">
-                    <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
+                    <TouchableOpacity onPress={()=> signIn()} className="p-2 bg-gray-100 rounded-2xl">
                         <Image source={require('../assets/icons/google.png')}
                             className="w-10 h-10" />
                     </TouchableOpacity>
@@ -86,7 +118,7 @@ export default function LoginScreen() {
                 <View className="flex-row justify-center mt-7">
                         <Text className="text-gray-500 font-semibold">Don't have an account?</Text>
                         <TouchableOpacity onPress={()=> navigation.navigate('SignUp')}>
-                            <Text className="font-semibold text-yellow-500"> Sign Up</Text>
+                            <Text className="font-semibold text-sky-700"> Sign Up</Text>
                         </TouchableOpacity>
                     </View>
             </View>

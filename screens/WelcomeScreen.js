@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function WelcomeScreen() {
     const navigation = useNavigation();
     return (
-        <SafeAreaView className="flex-1 bg-indigo-400" >
+        <SafeAreaView className="flex-1 bg-slate-950" >
             <View className="flex-1 flex justify-around my-4">
                 <Text
                     className="text-white font-bold text-4xl text-center">
@@ -19,9 +19,9 @@ export default function WelcomeScreen() {
                 <View className="space-y-4">
                     <TouchableOpacity
                     onPress={()=> navigation.navigate('SignUp')}
-                        className="py-3 bg-yellow-400 mx-7 rounded-xl">
+                        className="py-3 bg-sky-700 mx-7 rounded-xl">
                             <Text 
-                                className="text-xl font-bold text-center text-gray-700"
+                                className="text-xl font-bold text-center text-slate-950"
                             >
                                 Sign Up
                             </Text>
@@ -29,7 +29,7 @@ export default function WelcomeScreen() {
                     <View className="flex-row justify-center">
                         <Text className="text-white font-semibold">Already have an account?</Text>
                         <TouchableOpacity onPress={()=> navigation.navigate('Login')}>
-                            <Text className="font-semibold text-yellow-400"> Log In</Text>
+                            <Text className="font-semibold text-sky-700"> Log In</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
