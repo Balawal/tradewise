@@ -1,111 +1,93 @@
-// import React, { useEffect, useRef, useState } from 'react';
-// import { View, Image, Dimensions, FlatList } from 'react-native';
-// import { useFocusEffect } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { subscribeToStockUpdates, unsubscribeFromStockUpdates, useStockWebSocket } from '../components/websocket/WebSocketManager';
 
-// const { width } = Dimensions.get('window');
+const StockData = () => {
+  const [initialPrice, setInitialPrice] = useState(null);
+  const [currentPrice, setCurrentPrice] = useState(null);
+  const symbol = 'AAPL';
 
-// const originalData = [
-//   {
-//     url: 'https://cdn.pixabay.com/photo/2015/02/24/15/41/dog-647528_1280.jpg',
-//   },
-//   {
-//     url: 'https://s3.amazonaws.com/cdn-origin-etr.akc.org/wp-content/uploads/2017/04/12185602/Lagotto-Romangolo-Tongue-Out.jpg',
-//   },
-//   {
-//     url: 'https://boygeniusreport.files.wordpress.com/2016/11/puppy-dog.jpg?quality=98&strip=all',
-//   },
-//   {
-//     url: 'https://images2.minutemediacdn.com/image/upload/c_crop,h_1689,w_3000,x_0,y_404/f_auto,q_auto,w_1100/v1563809078/shape/mentalfloss/28865-gettyimages-500694766.jpg',
-//   },
-//   {
-//     url: 'https://d17fnq9dkz9hgj.cloudfront.net/breed-uploads/2018/08/basset-hound-detail.jpg?bust=1535565151&width=355',
-//   },
-// ];
-
-// // Duplicate the data array 5 times
-// const data = [...Array(5)].flatMap(() => originalData);
-
-// export default function SearchScreen() {
-//   const flatListRef = useRef(null);
-//   const [scrollX, setScrollX] = useState(0);
-//   const scrollInterval = useRef(null);
-
-//   const startAutoScroll = () => {
-//     scrollInterval.current = setInterval(() => {
-//       setScrollX(prevScrollX => {
-//         const newScrollX = prevScrollX + 1;
-//         if (newScrollX >= data.length * (width / originalData.length)) {
-//           // Reset to the start after scrolling through the items 5 times
-//           flatListRef.current.scrollToOffset({ offset: 0, animated: false });
-//           return 0;
-//         } else {
-//           flatListRef.current.scrollToOffset({ offset: newScrollX, animated: true });
-//           return newScrollX;
-//         }
-//       });
-//     }, 20); // Adjust this interval to change the scroll speed
-//   };
-
-//   const stopAutoScroll = () => {
-//     if (scrollInterval.current) {
-//       clearInterval(scrollInterval.current);
-//     }
-//   };
-
-//   useFocusEffect(
-//     React.useCallback(() => {
-//       startAutoScroll();
-
-//       return () => stopAutoScroll();
-//     }, [])
-//   );
-
-//   return (
-//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//       <FlatList
-//         ref={flatListRef}
-//         data={data}
-//         renderItem={({ item }) => (
-//           <View
-//             style={{
-//               width: 200,
-//               height: 170,
-//               borderRadius: 10,
-//               elevation: 5,
-//               marginHorizontal: 5,
-//               backgroundColor:'#111111'
-//             }}
-//           >
-//             <Image
-//               style={{ width: '100%', height: '100%', borderRadius: 10 }}
-//               source={{ uri: item.url }}
-//             />
-//           </View>
-//         )}
-//         horizontal
-//         keyExtractor={(item, index) => item.url + index}
-//         showsHorizontalScrollIndicator={false}
-//         scrollEnabled={false} // Disable manual scrolling
-//       />
-//     </View>
-//   );
-// }
-import {View, Text, TouchableOpacity} from 'react-native';
-import React from 'react';
-import { SafeAreaView } from 'react-native';
-import { signOut } from 'firebase/auth';
-import { auth } from '../config/firebase';
-
-export default function HomeScreen() {
-    const handleLogout = async() =>{
-        await signOut(auth);
+  const fetchLatestTradeData = async () => {
+    try {
+      const traderesponse = await fetch(`http://192.168.1.118:3000/api/latest-trade?symbols=${symbol}`);
+      const tradeData = await traderesponse.json();
+      console.log('Initial API data:', tradeData);
+      setInitialPrice(tradeData.trade.p);
+      setCurrentPrice(tradeData.trade.p);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }} className="flex-1 justify-center items-center">
-          <Text style={{ color: '#fff' }} className="text-lg">Settings Page</Text>
-          <TouchableOpacity onPress={handleLogout} className="p-1 bg-red-400 rounded-lg mt-4">
-              <Text className="text-white text-lg font-bold">Logout</Text>
-          </TouchableOpacity>
-      </SafeAreaView>
-  )
-}
+  };
+
+  useEffect(() => {
+    fetchLatestTradeData();
+    subscribeToStockUpdates(symbol);
+    
+    return () => {
+      unsubscribeFromStockUpdates(symbol);
+    };
+  }, [symbol]);
+
+  const onWebSocketMessage = (tradeData) => {
+    if (tradeData.S === symbol) {
+      //console.log('WebSocket data:', tradeData);
+      setCurrentPrice(tradeData.p);
+    }
+  };
+
+  const { isConnectedLatestTradeStocks } = useStockWebSocket(onWebSocketMessage);
+
+  if (initialPrice === null) {
+    return <View style={styles.centered}><Text>Loading the data...</Text></View>;
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.symbol}>{symbol}</Text>
+      <Text style={styles.latestTrade}>{currentPrice}</Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  symbol: {
+    fontSize: 35,
+    marginVertical: 8,
+    color: 'white',
+    fontWeight: 'bold',
+    marginTop: 80,
+    marginBottom: 2,
+    marginLeft: 50
+  },
+  latestTrade: {
+    fontSize: 35,
+    marginVertical: 8,
+    color: 'white',
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginBottom: 2,
+    marginLeft: 50
+  },
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#000',
+  },
+});
+
+export default StockData;
+
+
+// export default function HomeScreen() {
+//     const handleLogout = async() =>{
+//         await signOut(auth);
+//     }
+//     return (
+//       <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }} className="flex-1 justify-center items-center">
+//           <Text style={{ color: '#fff' }} className="text-lg">Settings Page</Text>
+//           <TouchableOpacity onPress={handleLogout} className="p-1 bg-red-400 rounded-lg mt-4">
+//               <Text className="text-white text-lg font-bold">Logout</Text>
+//           </TouchableOpacity>
+//       </SafeAreaView>
+//   )
+// }

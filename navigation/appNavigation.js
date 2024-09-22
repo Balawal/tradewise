@@ -2,17 +2,18 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import HomeScreen from '../screens/HomeScreen';
-import LoginScreen from '../screens/LoginScreen';
-import SignUpScreen from '../screens/SignUpScreen';
-import WelcomeScreen from '../screens/WelcomeScreen';
+import HomeScreen from '../screens/home/HomeScreen';
+import LoginScreen from '../screens/welcome/LoginScreen';
+import SignUpScreen from '../screens/welcome/SignUpScreen';
+import WelcomeScreen from '../screens/welcome/WelcomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import LottieView from 'lottie-react-native';
 import useAuth from '../hooks/useAuth';
 import BottomTabNavigation from './bottomTabNavigation';
-import { useStockWebSocket, closeStockWebSocket, useCryptoWebSocket, closeCryptoWebSocket } from '../components/WebSocketManager';
-import NewsDetailScreen from '../screens/NewsDetailScreen';
-import StockDetailScreen from '../screens/StockDetailScreen';
+import { useStockWebSocket, closeStockWebSocket, useCryptoWebSocket, closeCryptoWebSocket, useLatestTradeStocksWebSocket, closeLatestTradeStocksWebSocket } from '../components/websocket/WebSocketManager';
+import NewsDetailScreen from '../screens/social/news/NewsDetailScreen';
+import StockDetailScreen from '../screens/home/stocks/StockDetailScreen';
+import WatchListScreen from '../screens/watchlist/WatchListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,8 +31,9 @@ const SplashScreen = () => (
 export default function AppNavigation() {
     const [isReady, setIsReady] = useState(false);
     const { user } = useAuth();
-    const { isConnected } = useStockWebSocket();
-    const { isConnectedCrypto } = useCryptoWebSocket();
+    // const { isConnected } = useStockWebSocket();
+    // const { isConnectedCrypto } = useCryptoWebSocket();
+    //const { isConnectedLatestTradeStocks } = useLatestTradeStocksWebSocket();
     
 
     useEffect(() => {
@@ -40,8 +42,9 @@ export default function AppNavigation() {
       }, 10000);
 
       return () => {
-        closeStockWebSocket(); 
-        closeCryptoWebSocket();
+        // closeStockWebSocket(); 
+        // closeCryptoWebSocket();
+        //closeLatestTradeStocksWebSocket();
       };
     }, []);
 
@@ -59,6 +62,7 @@ export default function AppNavigation() {
             <Stack.Screen name="Done" component={BottomTabNavigation} options={{ headerShown: false }}/>
             <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerStyle: {backgroundColor: '#000000', }, headerTintColor: '#ffffff', }} />
             <Stack.Screen name="StockDetail" component={StockDetailScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
         </Stack.Navigator>
           ) : (
               // If user is not authenticated, show the Welcome/Login/SignUp screens
@@ -68,6 +72,7 @@ export default function AppNavigation() {
                   <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
                   <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerTitle: 'News Details' }} />
                   <Stack.Screen name="StockDetail" options={{ headerShown: false }} component={StockDetailScreen} />
+                  <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
               </Stack.Navigator>
           )}
       </NavigationContainer>

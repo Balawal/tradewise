@@ -9,10 +9,539 @@ const path = require('path');
 const cron = require('node-cron');
 
 const app = express();
-const cache = new NodeCache({ stdTTL: 600 }); // Cache data for 10 minutes
+const cache = new NodeCache({ stdTTL: 60 }); // Cache data for 10 minutes
 
 app.use(cors());
 app.use(express.json());
+
+
+const COINGECKO_API_KEY = 'CG-tKA862uwVTVcwMWDD6qKWXoL';
+
+//Endpoint to get all crypto news 
+app.get('/api/news-crypto', async (req, res) => {
+  console.log('Received request for news crypto');
+  try{
+    const cacheKey = 'news-crypto';
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    const response = await axios.get(`https://data.alpaca.markets/v1beta1/news?sort=desc&limit=12`, {
+      headers: alpacaHeaders,
+    });
+
+    const newsData = response.data;
+    cache.set(cacheKey, newsData);
+
+    res.json(newsData);
+  } catch (error) {
+    console.error('Error fetching news crypto:', error.message);
+    res.status(500).json({ error: 'Failed to fetch news crypto' });
+  }
+});
+
+
+//Endpoint to get one day crypto bars
+app.get('/api/crypto-one-day-bars', async (req, res) => {
+  const { coinName, vs_currency = 'usd', days = '1' } = req.query;
+
+  if (!coinName) {
+    return res.status(400).json({ error: 'Coin name or symbol is required' });
+  }
+
+  try {
+    // Step 1: Fetch the coin ID by coinName (similar to your previous logic)
+    const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+      headers: {
+        accept: 'application/json',
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    });
+    const coinsList = coinsListResponse.data;
+
+    // Find the coin by name or symbol
+    const coin = coinsList.find(c => c.name.toLowerCase() === coinName.toLowerCase() || c.symbol.toLowerCase() === coinName.toLowerCase());
+
+    if (!coin) {
+      return res.status(404).json({ error: 'Coin not found' });
+    }
+
+    const coinId = coin.id;
+
+    // Step 2: Fetch the historical market data for the coinId
+    const historicalDataResponse = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart`, {
+      params: {
+        vs_currency: vs_currency,
+        days: days,
+      },
+    });
+
+    const pricesData = historicalDataResponse.data.prices.map(price => price[1]);
+
+    const firstPrice = pricesData[0];
+    const lastPrice = pricesData[pricesData.length - 1];
+
+    const priceDifference = lastPrice - firstPrice;
+    const percentChange = ((lastPrice - firstPrice) / firstPrice) * 100;
+
+    // Respond with the extracted prices, priceDifference, and percentChange
+    res.json({
+      prices: pricesData,
+      priceDifference: priceDifference.toFixed(2),
+      percentChange: percentChange.toFixed(2),
+    });
+    
+  } catch (error) {
+    console.error('Error fetching one day crypto data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch one day crypto data' });
+  }
+});
+
+//Endpoint to get one week crypto bars
+app.get('/api/crypto-one-week-bars', async (req, res) => {
+  const { coinName, vs_currency = 'usd', days = '7' } = req.query;
+
+  if (!coinName) {
+    return res.status(400).json({ error: 'Coin name or symbol is required' });
+  }
+
+  try {
+    // Step 1: Fetch the coin ID by coinName (similar to your previous logic)
+    const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+      headers: {
+        accept: 'application/json',
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    });
+    const coinsList = coinsListResponse.data;
+
+    // Find the coin by name or symbol
+    const coin = coinsList.find(c => c.name.toLowerCase() === coinName.toLowerCase() || c.symbol.toLowerCase() === coinName.toLowerCase());
+
+    if (!coin) {
+      return res.status(404).json({ error: 'Coin not found' });
+    }
+
+    const coinId = coin.id;
+
+    // Step 2: Fetch the historical market data for the coinId
+    const historicalDataResponse = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart`, {
+      params: {
+        vs_currency: vs_currency,
+        days: days,
+      },
+    });
+
+    const pricesData = historicalDataResponse.data.prices.map(price => price[1]);
+
+    const firstPrice = pricesData[0];
+    const lastPrice = pricesData[pricesData.length - 1];
+
+    const priceDifference = lastPrice - firstPrice;
+    const percentChange = ((lastPrice - firstPrice) / firstPrice) * 100;
+
+    // Respond with the extracted prices, priceDifference, and percentChange
+    res.json({
+      prices: pricesData,
+      priceDifference: priceDifference.toFixed(2),
+      percentChange: percentChange.toFixed(2),
+    });
+    
+  } catch (error) {
+    console.error('Error fetching one week crypto data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch one week crypto data' });
+  }
+});
+
+//Endpoint to get one month crypto bars
+app.get('/api/crypto-one-month-bars', async (req, res) => {
+  const { coinName, vs_currency = 'usd', days = '30' } = req.query;
+
+  if (!coinName) {
+    return res.status(400).json({ error: 'Coin name or symbol is required' });
+  }
+
+  try {
+    // Step 1: Fetch the coin ID by coinName (similar to your previous logic)
+    const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+      headers: {
+        accept: 'application/json',
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    });
+    const coinsList = coinsListResponse.data;
+
+    // Find the coin by name or symbol
+    const coin = coinsList.find(c => c.name.toLowerCase() === coinName.toLowerCase() || c.symbol.toLowerCase() === coinName.toLowerCase());
+
+    if (!coin) {
+      return res.status(404).json({ error: 'Coin not found' });
+    }
+
+    const coinId = coin.id;
+
+    // Step 2: Fetch the historical market data for the coinId
+    const historicalDataResponse = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart`, {
+      params: {
+        vs_currency: vs_currency,
+        days: days,
+      },
+    });
+
+    const pricesData = historicalDataResponse.data.prices.map(price => price[1]);
+
+    const firstPrice = pricesData[0];
+    const lastPrice = pricesData[pricesData.length - 1];
+
+    const priceDifference = lastPrice - firstPrice;
+    const percentChange = ((lastPrice - firstPrice) / firstPrice) * 100;
+
+    // Respond with the extracted prices, priceDifference, and percentChange
+    res.json({
+      prices: pricesData,
+      priceDifference: priceDifference.toFixed(2),
+      percentChange: percentChange.toFixed(2),
+    });
+    
+  } catch (error) {
+    console.error('Error fetching one month crypto data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch one month crypto data' });
+  }
+});
+
+//Endpoint to get three month crypto bars
+app.get('/api/crypto-three-month-bars', async (req, res) => {
+  const { coinName, vs_currency = 'usd', days = '90' } = req.query;
+
+  if (!coinName) {
+    return res.status(400).json({ error: 'Coin name or symbol is required' });
+  }
+
+  try {
+    // Step 1: Fetch the coin ID by coinName (similar to your previous logic)
+    const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+      headers: {
+        accept: 'application/json',
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    });
+    const coinsList = coinsListResponse.data;
+
+    // Find the coin by name or symbol
+    const coin = coinsList.find(c => c.name.toLowerCase() === coinName.toLowerCase() || c.symbol.toLowerCase() === coinName.toLowerCase());
+
+    if (!coin) {
+      return res.status(404).json({ error: 'Coin not found' });
+    }
+
+    const coinId = coin.id;
+
+    // Step 2: Fetch the historical market data for the coinId
+    const historicalDataResponse = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart`, {
+      params: {
+        vs_currency: vs_currency,
+        days: days,
+      },
+    });
+
+    const pricesData = historicalDataResponse.data.prices.map(price => price[1]);
+
+    const firstPrice = pricesData[0];
+    const lastPrice = pricesData[pricesData.length - 1];
+
+    const priceDifference = lastPrice - firstPrice;
+    const percentChange = ((lastPrice - firstPrice) / firstPrice) * 100;
+
+    // Respond with the extracted prices, priceDifference, and percentChange
+    res.json({
+      prices: pricesData,
+      priceDifference: priceDifference.toFixed(2),
+      percentChange: percentChange.toFixed(2),
+    });
+    
+  } catch (error) {
+    console.error('Error fetching three month crypto data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch three month crypto data' });
+  }
+});
+
+//Endpoint to get six month crypto bars
+app.get('/api/crypto-six-month-bars', async (req, res) => {
+  const { coinName, vs_currency = 'usd', days = '180' } = req.query;
+
+  if (!coinName) {
+    return res.status(400).json({ error: 'Coin name or symbol is required' });
+  }
+
+  try {
+    // Step 1: Fetch the coin ID by coinName (similar to your previous logic)
+    const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+      headers: {
+        accept: 'application/json',
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    });
+    const coinsList = coinsListResponse.data;
+
+    // Find the coin by name or symbol
+    const coin = coinsList.find(c => c.name.toLowerCase() === coinName.toLowerCase() || c.symbol.toLowerCase() === coinName.toLowerCase());
+
+    if (!coin) {
+      return res.status(404).json({ error: 'Coin not found' });
+    }
+
+    const coinId = coin.id;
+
+    // Step 2: Fetch the historical market data for the coinId
+    const historicalDataResponse = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart`, {
+      params: {
+        vs_currency: vs_currency,
+        days: days,
+      },
+    });
+
+    const pricesData = historicalDataResponse.data.prices.map(price => price[1]);
+
+    const firstPrice = pricesData[0];
+    const lastPrice = pricesData[pricesData.length - 1];
+
+    const priceDifference = lastPrice - firstPrice;
+    const percentChange = ((lastPrice - firstPrice) / firstPrice) * 100;
+
+    // Respond with the extracted prices, priceDifference, and percentChange
+    res.json({
+      prices: pricesData,
+      priceDifference: priceDifference.toFixed(2),
+      percentChange: percentChange.toFixed(2),
+    });
+    
+  } catch (error) {
+    console.error('Error fetching six month crypto data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch six month crypto data' });
+  }
+});
+
+//Endpoint to get one day crypto bars
+app.get('/api/crypto-one-year-bars', async (req, res) => {
+  const { coinName, vs_currency = 'usd', days = '365' } = req.query;
+
+  if (!coinName) {
+    return res.status(400).json({ error: 'Coin name or symbol is required' });
+  }
+
+  try {
+    // Step 1: Fetch the coin ID by coinName (similar to your previous logic)
+    const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+      headers: {
+        accept: 'application/json',
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    });
+    const coinsList = coinsListResponse.data;
+
+    // Find the coin by name or symbol
+    const coin = coinsList.find(c => c.name.toLowerCase() === coinName.toLowerCase() || c.symbol.toLowerCase() === coinName.toLowerCase());
+
+    if (!coin) {
+      return res.status(404).json({ error: 'Coin not found' });
+    }
+
+    const coinId = coin.id;
+
+    // Step 2: Fetch the historical market data for the coinId
+    const historicalDataResponse = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart`, {
+      params: {
+        vs_currency: vs_currency,
+        days: days,
+      },
+    });
+
+    const pricesData = historicalDataResponse.data.prices.map(price => price[1]);
+
+    const firstPrice = pricesData[0];
+    const lastPrice = pricesData[pricesData.length - 1];
+
+    const priceDifference = lastPrice - firstPrice;
+    const percentChange = ((lastPrice - firstPrice) / firstPrice) * 100;
+
+    // Respond with the extracted prices, priceDifference, and percentChange
+    res.json({
+      prices: pricesData,
+      priceDifference: priceDifference.toFixed(2),
+      percentChange: percentChange.toFixed(2),
+    });
+    
+  } catch (error) {
+    console.error('Error fetching one year crypto data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch one year crypto data' });
+  }
+});
+
+
+//Endpoint to get crypto market data
+app.get('/api/crypto-coin-data', async (req, res) => {
+  const { coinName } = req.query;
+
+  if (!coinName) {
+    return res.status(400).json({ error: 'Coin name or symbol is required' });
+  }
+
+  try {
+    // Step 1: Fetch coins list and filter to get the coin ID by name or symbol
+    const cacheKey = 'crypto-coin-data';
+    let coinsList = cache.get(cacheKey);
+
+
+    const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+      headers: {
+        accept: 'application/json',
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    });
+    coinsList = coinsListResponse.data;
+
+
+    // Find the coin by name or symbol
+    const coin = coinsList.find(c => c.name.toLowerCase() === coinName.toLowerCase() || c.symbol.toLowerCase() === coinName.toLowerCase());
+
+    if (!coin) {
+      return res.status(404).json({ error: 'Coin not found' });
+    }
+
+    const coinId = coin.id;
+    console.log('heres the id:' , coinId);
+
+    // Step 2: Fetch full coin data by ID
+
+    const coinDataResponse = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}`, {
+    });
+    
+    coinData = coinDataResponse.data;
+    // Respond with coin data
+    res.json(coinData);
+
+  } catch (error) {
+    console.error('Error fetching coin data by ID:', error.message);
+    res.status(500).json({ error: 'Failed to fetch coin data' });
+  }
+});
+
+
+
+
+// Endpoint to search for crypto
+app.get('/api/search-query-crypto', async (req, res) => {
+  console.log('Received request for crypto search');
+  
+  const { query } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ error: 'Query parameter is required' });
+  }
+
+  try {
+    const cacheKey = `search-query-crypto-${query}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    const response = await axios.get('https://api.coingecko.com/api/v3/search', {
+      params: {
+        query: query,
+      },
+    });
+
+    const searchResults = response.data;
+    const limitedResults = {
+      coins: searchResults.coins.slice(0, 10),
+      exchanges: searchResults.exchanges.slice(0, 10)
+    };
+
+    cache.set(cacheKey, limitedResults);
+
+    res.json(limitedResults);
+  } catch (error) {
+    console.error('Error fetching coin search results:', error.message);
+    res.status(500).json({ error: 'Failed to fetch coin search results' });
+  }
+});
+
+
+
+const FIN_MODEL_API_KEY = 'LwjzM54U5mzuh0sVt21s0fxmRkmv7YT3';
+
+
+// Endpoint to get most active: stocks from alpaca api
+app.get('/api/most-active', async (req, res) => {
+  console.log('Received request for most active');
+  try {
+    const cacheKey = 'most-active';
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch Alpaca API for volume data
+    const alpacaResponse = await axios.get(`https://data.alpaca.markets/v1beta1/screener/stocks/most-actives?by=volume&top=10`, {
+      headers: alpacaHeaders,
+    });
+    const alpacaData = alpacaResponse.data.most_actives;
+
+    // Fetch Financial Model API for price and percentage change data
+    const finModelResponse = await axios.get(`https://financialmodelingprep.com/api/v3/stock_market/actives?apikey=${FIN_MODEL_API_KEY}`);
+    const finModelData = finModelResponse.data;
+
+    // Merge both datasets based on symbol
+    const mergedData = alpacaData.map(alpacaStock => {
+      // Find the matching stock from Financial Model API by symbol
+      const finModelStock = finModelData.find(stock => stock.symbol === alpacaStock.symbol);
+      
+      return {
+        symbol: alpacaStock.symbol,
+        volume: alpacaStock.volume,
+        trade_count: alpacaStock.trade_count,
+        // Merge in the fields from the Financial Model API
+        price: finModelStock ? finModelStock.price : null,
+        change: finModelStock ? finModelStock.change : null,
+        percent_change: finModelStock ? finModelStock.changesPercentage : null,
+      };
+    });
+
+    // Cache the merged data
+    cache.set(cacheKey, mergedData);
+
+    // Send the merged data as the response
+    res.json(mergedData);
+  } catch (error) {
+    console.error('Error fetching most active stocks:', error.message);
+    res.status(500).json({ error: 'Failed to fetch most active stocks' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const ALPHA_VANTAGE_API_KEY = '6ADIY1OCTVMPVEY0'; 
 
@@ -317,6 +846,7 @@ app.get('/api/stock-sentiment', async (req, res) => {
         function: 'NEWS_SENTIMENT',
         tickers: symbol,
         apikey: ALPHA_VANTAGE_API_KEY,
+        limit: 12
       },
     });
 
@@ -377,6 +907,21 @@ app.get('/api/stock-sentiment', async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const ALPACA_API_KEY = 'PKH9EBVMYSPWD2P7CN1F';
 const ALPACA_API_SECRET = 'Rj6GHHhlEauKnnsyk6QN8JNczpZacRZbwdnnZ4a5';
 
@@ -384,6 +929,8 @@ const alpacaHeaders = {
   'APCA-API-KEY-ID': ALPACA_API_KEY,
   'APCA-API-SECRET-KEY': ALPACA_API_SECRET,
 };
+
+
 
 // Endpoint to get top movers: stocks
 app.get('/api/top-movers', async (req, res) => {
@@ -528,6 +1075,424 @@ app.get('/api/news-articles', async (req, res) => {
 });
 
 
+//Endpoint to get latest trade
+app.get('/api/latest-trade', async (req, res) => {
+  console.log('Received request for latest trade');
+  try{
+    const symbols = req.query.symbols;
+    //console.log(symbols);
+    const cacheKey = 'latest-trade';
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/${symbols}/trades/latest?feed=iex`, {
+      headers: alpacaHeaders, 
+    });
+    //console.log(response);
+
+    const latestData = response.data;
+    cache.set(cacheKey, latestData);
+
+    res.json(latestData);
+  } catch (error) {
+    console.error('Error fetching latest trade:', error.message);
+    res.status(500).json({ error: 'Failed to fetch latest trade' });
+  }
+});
+
+
+// Endpoint to get latest  bars
+app.get('/api/latest-bars', async (req, res) => {
+  console.log('Received request for latest bars');
+  try {
+    const symbols = req.query.symbols; // e.g., 'AAPL,MSFT,GOOG'
+    //console.log(symbols);
+    const endDate = new Date().toISOString().split('T')[0];
+    //console.log(endDate);
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 2);
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    //console.log(formattedStartDate);
+
+    // Cache key for the specific request
+    const cacheKey = `latest-bars-${symbols}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch the stock bars from Alpaca
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbols}&start=${formattedStartDate}&end=${endDate}&timeframe=10Min&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+    //console.log(response);
+
+    if (!response.data || !response.data.bars || !response.data.bars[symbols]) {
+      return res.status(404).json({ [symbols]: { error: `No data available for symbol ${symbols}` } });
+    }
+
+    const barsData = response.data.bars[symbols];
+    //console.log(barsData);
+
+    const firstBar = barsData[0];  // The oldest bar (1 week ago)
+    const lastBar = barsData[barsData.length - 1];  // The most recent bar
+
+    if (!firstBar || !lastBar) {
+      return res.status(500).json({ error: `Insufficient data for ${symbols}` });
+    }
+
+    const priceDifference = lastBar.c - firstBar.c; // Closing price difference
+    const percentChange = ((priceDifference / firstBar.c) * 100).toFixed(2); // Percent change
+    //console.log(priceDifference, percentChange);
+
+    // Add the calculated data to the response
+    const responseData = {
+      symbol: symbols,
+      bars: barsData,
+      priceDifference: priceDifference,
+      percentChange: percentChange,
+    };
+
+
+    // Cache the calculated data
+    cache.set(cacheKey, responseData);
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching latest bars:', error.message);
+    res.status(500).json({ error: 'Failed to fetch latest bars' });
+  }
+});
+
+
+// Endpoint to get one week bars
+app.get('/api/one-week-bars', async (req, res) => {
+  console.log('Received request for one week bars');
+  try {
+    const symbols = req.query.symbols; // e.g., 'AAPL,MSFT,GOOG'
+    //console.log(symbols);
+    const endDate = new Date().toISOString().split('T')[0];
+    //console.log(endDate);
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 7);
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    //console.log(formattedStartDate);
+
+  
+    const cacheKey = `one-week-bars-${symbols}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch the stock bars from Alpaca
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbols}&start=${formattedStartDate}&end=${endDate}&timeframe=1Hour&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+
+    //console.log(response);
+    if (!response.data || !response.data.bars || !response.data.bars[symbols]) {
+      return res.status(404).json({ [symbols]: { error: `No data available for symbol ${symbols}` } });
+    }
+
+    const barsData = response.data.bars[symbols];
+    const firstBar = barsData[0];  // The oldest bar (1 week ago)
+    const lastBar = barsData[barsData.length - 1];  // The most recent bar
+
+    if (!firstBar || !lastBar) {
+      return res.status(500).json({ error: `Insufficient data for ${symbols}` });
+    }
+
+    const priceDifference = lastBar.c - firstBar.c; // Closing price difference
+    const percentChange = ((priceDifference / firstBar.c) * 100).toFixed(2); // Percent change
+    //console.log(priceDifference, percentChange);
+
+    // Add the calculated data to the response
+    const responseData = {
+      symbol: symbols,
+      bars: barsData,
+      priceDifference: priceDifference,
+      percentChange: percentChange,
+    };
+
+
+    // Cache the calculated data
+    cache.set(cacheKey, responseData);
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching one week bars:', error.message);
+    res.status(500).json({ error: 'Failed to fetch one week bars' });
+  }
+});
+
+
+
+// Endpoint to get one month bars
+app.get('/api/one-month-bars', async (req, res) => {
+  console.log('Received request for one month bars');
+  try {
+    const symbols = req.query.symbols; // e.g., 'AAPL,MSFT,GOOG'
+    //console.log(symbols);
+    const endDate = new Date().toISOString().split('T')[0];
+    //console.log(endDate);
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 1);
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    //console.log(formattedStartDate);
+
+  
+    const cacheKey = `one-month-bars-${symbols}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch the stock bars from Alpaca
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbols}&start=${formattedStartDate}&end=${endDate}&timeframe=12Hour&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+
+    //console.log(response);
+    if (!response.data || !response.data.bars || !response.data.bars[symbols]) {
+      return res.status(404).json({ [symbols]: { error: `No data available for symbol ${symbols}` } });
+    }
+
+    const barsData = response.data.bars[symbols];
+    const firstBar = barsData[0];  // The oldest bar (1 year ago)
+    const lastBar = barsData[barsData.length - 1];  // The most recent bar
+
+    if (!firstBar || !lastBar) {
+      return res.status(500).json({ error: `Insufficient data for ${symbols}` });
+    }
+
+    const priceDifference = lastBar.c - firstBar.c; // Closing price difference
+    const percentChange = ((priceDifference / firstBar.c) * 100).toFixed(2); // Percent change
+
+    // Add the calculated data to the response
+    const responseData = {
+      symbol: symbols,
+      bars: barsData,
+      priceDifference: priceDifference,
+      percentChange: percentChange,
+    };
+
+
+    // Cache the calculated data
+    cache.set(cacheKey, responseData);
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching one month bars:', error.message);
+    res.status(500).json({ error: 'Failed to fetch one month bars' });
+  }
+});
+
+
+// Endpoint to get six month bars
+app.get('/api/six-month-bars', async (req, res) => {
+  console.log('Received request for six month bars');
+  try {
+    const symbols = req.query.symbols; // e.g., 'AAPL,MSFT,GOOG'
+    //console.log(symbols);
+    const endDate = new Date().toISOString().split('T')[0];
+    //console.log(endDate);
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 6);
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    //console.log(formattedStartDate);
+
+  
+    const cacheKey = `six-month-bars-${symbols}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch the stock bars from Alpaca
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbols}&start=${formattedStartDate}&end=${endDate}&timeframe=1Day&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+
+    //console.log(response);
+    if (!response.data || !response.data.bars || !response.data.bars[symbols]) {
+      return res.status(404).json({ [symbols]: { error: `No data available for symbol ${symbols}` } });
+    }
+
+    const barsData = response.data.bars[symbols];
+    const firstBar = barsData[0];  // The oldest bar (6 months ago)
+    const lastBar = barsData[barsData.length - 1];  // The most recent bar
+
+    if (!firstBar || !lastBar) {
+      return res.status(500).json({ error: `Insufficient data for ${symbols}` });
+    }
+
+    const priceDifference = lastBar.c - firstBar.c; // Closing price difference
+    const percentChange = ((priceDifference / firstBar.c) * 100).toFixed(2); // Percent change
+
+    // Add the calculated data to the response
+    const responseData = {
+      symbol: symbols,
+      bars: barsData,
+      priceDifference: priceDifference,
+      percentChange: percentChange,
+    };
+
+
+    // Cache the calculated data
+    cache.set(cacheKey, responseData);
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching six month bars:', error.message);
+    res.status(500).json({ error: 'Failed to fetch six month bars' });
+  }
+});
+
+// Endpoint to get one year bars
+app.get('/api/one-year-bars', async (req, res) => {
+  console.log('Received request for one year bars');
+  try {
+    const symbols = req.query.symbols; // e.g., 'AAPL,MSFT,GOOG'
+    //console.log(symbols);
+    const endDate = new Date().toISOString().split('T')[0];
+    //console.log(endDate);
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 12);
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    //console.log(formattedStartDate);
+
+  
+    const cacheKey = `one-year-bars-${symbols}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch the stock bars from Alpaca
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbols}&start=${formattedStartDate}&end=${endDate}&timeframe=1Day&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+
+    //console.log(response);
+    if (!response.data || !response.data.bars || !response.data.bars[symbols]) {
+      return res.status(404).json({ [symbols]: { error: `No data available for symbol ${symbols}` } });
+    }
+
+    const barsData = response.data.bars[symbols];
+    const firstBar = barsData[0];  // The oldest bar (1 year ago)
+    const lastBar = barsData[barsData.length - 1];  // The most recent bar
+
+    if (!firstBar || !lastBar) {
+      return res.status(500).json({ error: `Insufficient data for ${symbols}` });
+    }
+
+    const priceDifference = lastBar.c - firstBar.c; // Closing price difference
+    const percentChange = ((priceDifference / firstBar.c) * 100).toFixed(2); // Percent change
+
+    // Add the calculated data to the response
+    const responseData = {
+      symbol: symbols,
+      bars: barsData,
+      priceDifference: priceDifference,
+      percentChange: percentChange,
+    };
+
+
+    // Cache the calculated data
+    cache.set(cacheKey, responseData);
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching one year bars:', error.message);
+    res.status(500).json({ error: 'Failed to fetch one year bars' });
+  }
+});
+
+
+// Endpoint to get five years bars
+app.get('/api/five-years-bars', async (req, res) => {
+  console.log('Received request for five years bars');
+  try {
+    const symbols = req.query.symbols; // e.g., 'AAPL,MSFT,GOOG'
+    //console.log(symbols);
+    const endDate = new Date().toISOString().split('T')[0];
+    //console.log(endDate);
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 60);
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    //console.log(formattedStartDate);
+
+  
+    const cacheKey = `five-years-bars-${symbols}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch the stock bars from Alpaca
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbols}&start=${formattedStartDate}&end=${endDate}&timeframe=1Day&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+
+    //console.log(response);
+    if (!response.data || !response.data.bars || !response.data.bars[symbols]) {
+      return res.status(404).json({ [symbols]: { error: `No data available for symbol ${symbols}` } });
+    }
+
+    const barsData = response.data.bars[symbols];
+    const firstBar = barsData[0];  // The oldest bar (5 years ago)
+    const lastBar = barsData[barsData.length - 1];  // The most recent bar
+
+    if (!firstBar || !lastBar) {
+      return res.status(500).json({ error: `Insufficient data for ${symbols}` });
+    }
+
+    const priceDifference = lastBar.c - firstBar.c; // Closing price difference
+    const percentChange = ((priceDifference / firstBar.c) * 100).toFixed(2); // Percent change
+
+    // Add the calculated data to the response
+    const responseData = {
+      symbol: symbols,
+      bars: barsData,
+      priceDifference: priceDifference,
+      percentChange: percentChange,
+    };
+
+
+    // Cache the calculated data
+    cache.set(cacheKey, responseData);
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching five years bars:', error.message);
+    res.status(500).json({ error: 'Failed to fetch five years bars' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 const tweetFilesDirectory = path.join(__dirname, 'tweet_files');
@@ -557,14 +1522,14 @@ cron.schedule('0 */12 * * *', async () => {
 app.get('/api/scrape-tweets', async (req, res) => {
   console.log('Received request to scrape tweets');
   try {
-    console.log('Starting the tweet scraping process...');
+    //console.log('Starting the tweet scraping process...');
     const browser = await puppeteer.launch({ headless: false });
-    console.log('Browser launched.');
+    //console.log('Browser launched.');
     const page = await browser.newPage();
-    console.log('New page created.');
+    //console.log('New page created.');
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.3');
                             //Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
-    console.log('User agent set.');
+    //console.log('User agent set.');
 
     const profiles = [
       //'https://nitter.privacydev.net/AdamMancini4',
@@ -577,10 +1542,10 @@ app.get('/api/scrape-tweets', async (req, res) => {
 
     let allTweets = [];
     for (const url of profiles) {
-      console.log(`Navigating to ${url}`);
+      //console.log(`Navigating to ${url}`);
       const response = await page.goto(url);
       const statusCode = response.status();
-      console.log(`HTTP Status Code for ${url}: ${statusCode}`);
+      //console.log(`HTTP Status Code for ${url}: ${statusCode}`);
 
       if (statusCode !== 200) {
         console.error(`Failed to access ${url}. Skipping...`);
@@ -588,7 +1553,7 @@ app.get('/api/scrape-tweets', async (req, res) => {
         continue;
       }
 
-      console.log(`Scraping tweets from ${url}`);
+      //console.log(`Scraping tweets from ${url}`);
       const tweets = await page.$$eval('.timeline-item', nodes => {
         return nodes.map(node => {
           let content = (node.querySelector('.tweet-content')?.innerText || '').replace(/\n/g, ' ').replace(/,/g, ';');

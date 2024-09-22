@@ -1,8 +1,8 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import NewsScreen from './NewsScreen';
+import NewsScreen from './news/NewsScreen';
 import TwitterScreen from './TwitterScreen';
-import NewsDetailScreen from './NewsDetailScreen';
+import NewsDetailScreen from './news/NewsDetailScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 

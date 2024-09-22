@@ -11,13 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "plugins": [
-      "@react-native-google-signin/google-signin"
-    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tradewise.tradewise",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "bundleIdentifier": "com.tradewise.tradewise"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +29,7 @@
       "eas": {
         "projectId": "aed95112-43bc-4bb1-a765-ad2aa570d8a0"
       }
-    }
+    },
+    "jsEngine": "hermes"
   }
 }

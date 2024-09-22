@@ -13,7 +13,7 @@ export default function WelcomeScreen() {
                     Let's get started!
                 </Text>
                 <View className="flex-row justify-center">
-                    <Image source={require('../assets/icons/reading.png')}
+                    <Image source={require('../../assets/icons/reading.png')}
                         style={{width: 250, height: 250}} />
                 </View>
                 <View className="space-y-4">

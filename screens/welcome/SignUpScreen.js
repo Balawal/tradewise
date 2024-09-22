@@ -2,15 +2,15 @@ import {View, Text, Image, TouchableOpacity, TextInput} from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ArrowLeftIcon } from 'react-native-heroicons/solid';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { auth } from '../config/firebase';
-import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
+import { auth } from '../../config/firebase';
+//import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
 
-GoogleSignin.configure({
-    webClientId: '413835240721-m5r9lq7deapq3esuti0un7fabt11l3du.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+// GoogleSignin.configure({
+//     webClientId: '413835240721-m5r9lq7deapq3esuti0un7fabt11l3du.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
    
-  });
+//   });
 
 export default function SignUpScreen() {
     const navigation = useNavigation();
@@ -27,30 +27,30 @@ export default function SignUpScreen() {
         }
     }
 
-    const signIn = async () => {
-        try {
-          await GoogleSignin.hasPlayServices();
-          const {idToken} = await GoogleSignin.signIn();
-          const googleCredentials = GoogleAuthProvider.credential(idToken);
-          await signInWithCredential(googleCredentials);
-        } catch (error) {
-            console.log('got error: ', error.message);
-          if (isErrorWithCode(error)) {
-            switch (error.code) {
-              case statusCodes.IN_PROGRESS:
-                // operation (eg. sign in) already in progress
-                break;
-              case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-                // Android only, play services not available or outdated
-                break;
-              default:
-              // some other error happened
-            }
-          } else {
-            // an error that's not related to google sign in occurred
-          }
-        }
-      };
+    // const signIn = async () => {
+    //     try {
+    //       await GoogleSignin.hasPlayServices();
+    //       const {idToken} = await GoogleSignin.signIn();
+    //       const googleCredentials = GoogleAuthProvider.credential(idToken);
+    //       await signInWithCredential(googleCredentials);
+    //     } catch (error) {
+    //         console.log('got error: ', error.message);
+    //       if (isErrorWithCode(error)) {
+    //         switch (error.code) {
+    //           case statusCodes.IN_PROGRESS:
+    //             // operation (eg. sign in) already in progress
+    //             break;
+    //           case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+    //             // Android only, play services not available or outdated
+    //             break;
+    //           default:
+    //           // some other error happened
+    //         }
+    //       } else {
+    //         // an error that's not related to google sign in occurred
+    //       }
+    //     }
+    // };
     
     return(
         <View className="flex-1 bg-slate-950">
@@ -58,13 +58,13 @@ export default function SignUpScreen() {
                 <View className="flex-row justify-start">
                     <TouchableOpacity
                         onPress={()=> navigation.goBack()}
-                        className="bg-sky-700 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+                        style={{ marginLeft: 15 }}
                     >
-                        <ArrowLeftIcon size="20" color="black" />
+                        <Icon name="arrow-back-ios" size="28" color="white" />
                     </TouchableOpacity>
                 </View>
                 <View className="flex-row justify-center">
-                    <Image source={require('../assets/icons/reading.png')}
+                    <Image source={require('../../assets/icons/reading.png')}
                         style={{width: 165, height: 110}} />
                 </View>
             </SafeAreaView>
@@ -108,18 +108,18 @@ export default function SignUpScreen() {
                 </Text>
                 <View className="flex-row justify-center space-x-12">
                     
-                    <TouchableOpacity onPress={()=> signIn()} className="p-2 bg-gray-100 rounded-2xl">
-                        <Image source={require('../assets/icons/google.png')}
+                    <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
+                        <Image source={require('../../assets/icons/google.png')}
                             className="w-10 h-10" />
                     </TouchableOpacity>
                     
                     <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
-                        <Image source={require('../assets/icons/facebook.png')}
+                        <Image source={require('../../assets/icons/facebook.png')}
                             className="w-10 h-10" />
                     </TouchableOpacity>
                     
                     <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
-                        <Image source={require('../assets/icons/apple-logo.png')}
+                        <Image source={require('../../assets/icons/apple-logo.png')}
                             className="w-10 h-10" />
                     </TouchableOpacity>
                 

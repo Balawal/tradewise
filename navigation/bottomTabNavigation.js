@@ -2,12 +2,13 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, Feather, FontAwesome5 } from '@expo/vector-icons'; // Import icons from Expo
 
-import HomeScreen from '../screens/HomeScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import TwitterScreen from '../screens/TwitterScreen';
-import NewsScreen from '../screens/NewsScreen';
-import SocialScreen from '../screens/SocialScreen';
+import HomeScreen from '../screens/home/HomeScreen';
+import SettingsScreen from '../screens/settings/SettingsScreen';
+import TwitterScreen from '../screens/social/TwitterScreen';
+import NewsScreen from '../screens/social/news/NewsScreen';
+import SocialScreen from '../screens/social/SocialScreen';
 import SearchScreen from '../screens/SearchScreen';
+import WatchListScreen from '../screens/watchlist/WatchListScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -45,7 +46,7 @@ const BottomTabNavigation = () => {
             })}
         >
             <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Cash" component={SettingsScreen}/>
+            <Tab.Screen name="Cash" component={WatchListScreen}/>
             <Tab.Screen name="Search" component={SearchScreen} />
             <Tab.Screen name="Messages" component={SocialScreen} />
             <Tab.Screen name="Settings" component={SettingsScreen} />
