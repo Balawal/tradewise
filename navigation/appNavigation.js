@@ -13,6 +13,7 @@ import BottomTabNavigation from './bottomTabNavigation';
 import { useStockWebSocket, closeStockWebSocket, useCryptoWebSocket, closeCryptoWebSocket, useLatestTradeStocksWebSocket, closeLatestTradeStocksWebSocket } from '../components/websocket/WebSocketManager';
 import NewsDetailScreen from '../screens/social/news/NewsDetailScreen';
 import StockDetailScreen from '../screens/home/stocks/StockDetailScreen';
+import CryptoDetailScreen from '../screens/home/crypto/CryptoDetailScreen';
 import WatchListScreen from '../screens/watchlist/WatchListScreen';
 
 const Stack = createNativeStackNavigator();
@@ -62,6 +63,7 @@ export default function AppNavigation() {
             <Stack.Screen name="Done" component={BottomTabNavigation} options={{ headerShown: false }}/>
             <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerStyle: {backgroundColor: '#000000', }, headerTintColor: '#ffffff', }} />
             <Stack.Screen name="StockDetail" component={StockDetailScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="CryptoDetail" component={CryptoDetailScreen} options={{ headerShown: false }} />
             <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
         </Stack.Navigator>
           ) : (
@@ -72,6 +74,7 @@ export default function AppNavigation() {
                   <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
                   <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerTitle: 'News Details' }} />
                   <Stack.Screen name="StockDetail" options={{ headerShown: false }} component={StockDetailScreen} />
+                  <Stack.Screen name="CryptoDetail" options={{ headerShown: false }} component={CryptoDetailScreen} />
                   <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
               </Stack.Navigator>
           )}

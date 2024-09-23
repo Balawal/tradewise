@@ -28,7 +28,7 @@ const TimeframeButtons = ({ onSelectTimeframe, buttonColor, selectedTimeframe, s
   };
   
 
-const ChartCrypto = ({cryptoSymbol}) => {
+const ChartCrypto = ({cryptoID}) => {
   const [chartData, setChartData] = useState(null);
   const [percentChange, setPercentChange] = useState(0);
   const [priceDifference, setPriceDifference] = useState(0);
@@ -36,7 +36,6 @@ const ChartCrypto = ({cryptoSymbol}) => {
   const [graphColor, setGraphColor] = useState('white'); 
   const { width } = Dimensions.get('window');
   const chartWidth = width * 0.70; 
-  cryptoSymbol = 'bitcoin';
 
   const fetchChartData = async (timeframe) => {
     try {
@@ -50,7 +49,7 @@ const ChartCrypto = ({cryptoSymbol}) => {
       };
 
       const response = await axios.get(`http://192.168.1.118:3000${endpointMap[timeframe]}`, {
-        params: { coinName: cryptoSymbol },
+        params: { coinName: cryptoID },
       });
 
       const data = response.data.prices;
@@ -74,7 +73,7 @@ const ChartCrypto = ({cryptoSymbol}) => {
     fetchChartData(selectedTimeframe);
     console.log("Selected timeframe: ", selectedTimeframe);
     console.log("Graph color: ", graphColor);
-  }, [selectedTimeframe, cryptoSymbol]);
+  }, [selectedTimeframe, cryptoID]);
 
   if (!chartData) {
     return <View style={styles.centered}><Text>Loading chart...</Text></View>;

@@ -57,9 +57,9 @@ export default function LoginScreen() {
                 <View className="flex-row justify-start">
                 <TouchableOpacity
                         onPress={()=> navigation.goBack()}
-                        style={{ marginLeft: 15 }}
+                        style={{ marginLeft: 18 }}
                     >
-                        <Icon name="arrow-back-ios" size="28" color="white"/>
+                        <Icon name="arrow-back-ios" size="25" color="white"/>
                     </TouchableOpacity>
                 </View>
                 <View className="flex-row justify-center">

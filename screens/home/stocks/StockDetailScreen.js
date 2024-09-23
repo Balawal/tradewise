@@ -145,10 +145,10 @@ const StockDetailScreen = ({ route, navigation }) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back-ios" size="25" color="white" />
             </TouchableOpacity>
-            <WatchList stockSymbol={stockSymbol} stockName={stockData.Name} />
+            <WatchList stockSymbol={stockSymbol} stockName={stockData.Name} stockPrice={<LastPrice stockSymbol={stockSymbol} />}/>
           </View>
             
-            <Text style={styles.name}>{stockData.Name || "none"}</Text>
+            <Text style={styles.name}>{stockData.Name || "None"}</Text>
             <LastPrice stockSymbol={stockSymbol} />
             <Chart stockSymbol={stockSymbol} />
             
@@ -156,15 +156,15 @@ const StockDetailScreen = ({ route, navigation }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>TICKER</Text>
-                <Text style={styles.under}>{stockData.Symbol || "none"}</Text>
+                <Text style={styles.under}>{stockData.Symbol || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>MARKET CAP</Text>
-                <Text style={styles.under}>{formatNum(stockData.MarketCapitalization) || "none"}</Text>
+                <Text style={styles.under}>{formatNum(stockData.MarketCapitalization) || "None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>VOLUME</Text>
-                <Text style={styles.under}>{formatNum(volume?.mostRecent?.volume) || "none"}</Text>
+                <Text style={styles.under}>{formatNum(volume?.mostRecent?.volume) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -172,15 +172,15 @@ const StockDetailScreen = ({ route, navigation }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>OPEN</Text>
-                <Text style={styles.under}>{formatDecimal(volume?.mostRecent?.open) || "none"}</Text>
+                <Text style={styles.under}>{formatDecimal(volume?.mostRecent?.open) || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>PE RATIO</Text>
-                <Text style={styles.under}>{stockData.PERatio || "none"}</Text>
+                <Text style={styles.under}>{stockData.PERatio || "None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>AVG VOLUME</Text>
-                <Text style={styles.under}>{formatNum(volume?.averageVolumes?.avgVolume365) || "none"}</Text>
+                <Text style={styles.under}>{formatNum(volume?.averageVolumes?.avgVolume365) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -188,15 +188,15 @@ const StockDetailScreen = ({ route, navigation }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>CLOSE</Text>
-                <Text style={styles.under}>{formatDecimal(volume?.mostRecent?.close) || "none"}</Text>
+                <Text style={styles.under}>{formatDecimal(volume?.mostRecent?.close) || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>YTD CHANGE</Text>
-                <Text style={styles.under}>{formatDecimal(volume?.ytdChange) || "none"}%</Text>
+                <Text style={styles.under}>{formatDecimal(volume?.ytdChange) || "None"}%</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>EARNING DATE</Text>
-                <Text style={styles.under}>{earnings?.annualEarnings?.[0]?.fiscalDateEnding || "none"}</Text>
+                <Text style={styles.under}>{earnings?.annualEarnings?.[0]?.fiscalDateEnding || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -243,7 +243,7 @@ const StockDetailScreen = ({ route, navigation }) => {
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>FLOAT</Text>
-                <Text style={styles.under}>{"none"}</Text>
+                <Text style={styles.under}>{"None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>10D AVG VOL</Text>

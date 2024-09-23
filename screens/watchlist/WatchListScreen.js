@@ -23,7 +23,8 @@ const WatchlistScreen = () => {
     <View>
       <View style={styles.stockCard}>
         <Text style={styles.stockSymbol}>{item.stockSymbol}</Text>
-        <Text style={styles.stockName}>{item.stockName || "No name"}</Text>
+        <Text style={styles.stockName}>{item.stockName}</Text>
+        <Text style={styles.stockPrice}>{item.stockPrice}</Text>
       </View>
       <View style={styles.separator} />
     </View>

@@ -20,15 +20,23 @@ const COINGECKO_API_KEY = 'CG-tKA862uwVTVcwMWDD6qKWXoL';
 //Endpoint to get all crypto news 
 app.get('/api/news-crypto', async (req, res) => {
   console.log('Received request for news crypto');
-  try{
-    const cacheKey = 'news-crypto';
+  
+  // Get the 'symbols' query parameter from the request
+  const { symbols } = req.query;
+
+  // Check if symbols were provided, if not, set it to an empty string
+  const symbolQuery = symbols ? `${symbols}USD` : 'USD';
+
+  try {
+    const cacheKey = `news-crypto-${symbolQuery}`;
     const cachedData = cache.get(cacheKey);
 
     if (cachedData) {
       return res.json(cachedData);
     }
 
-    const response = await axios.get(`https://data.alpaca.markets/v1beta1/news?sort=desc&limit=12`, {
+    // Update the API call to include the symbols query parameter
+    const response = await axios.get(`https://data.alpaca.markets/v1beta1/news?symbols=${symbolQuery}&sort=desc&limit=12`, {
       headers: alpacaHeaders,
     });
 
@@ -846,7 +854,6 @@ app.get('/api/stock-sentiment', async (req, res) => {
         function: 'NEWS_SENTIMENT',
         tickers: symbol,
         apikey: ALPHA_VANTAGE_API_KEY,
-        limit: 12
       },
     });
 
@@ -885,6 +892,8 @@ app.get('/api/stock-sentiment', async (req, res) => {
       }
     });
 
+    const limitedArticles = articles.slice(0, 12);
+
     // Average sentiment score
     tickerSentimentScore = tickerSentimentScore / newsData.length;
 
@@ -893,8 +902,8 @@ app.get('/api/stock-sentiment', async (req, res) => {
       tickerSentimentScore: tickerSentimentScore.toFixed(3),
       positiveCount,
       negativeCount,
-      totalArticles: newsData.length,
-      articles,
+      totalArticles: limitedArticles.length,
+      articles: limitedArticles
     };
 
     // Cache the response data
