@@ -15,7 +15,6 @@ const LastPrice = ({ stockSymbol }) => {
       console.log('Initial API data:', tradeData);
       setInitialPrice(tradeData.trade.p);
       setCurrentPrice(tradeData.trade.p);
-
     } catch (error) {
       console.error(`Error fetching data:`, error);
     }

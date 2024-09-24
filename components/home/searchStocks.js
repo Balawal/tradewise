@@ -12,7 +12,6 @@ const SearchStocks = ({ focusInput }) => {
 	const [searchResult, setSearchResult] = useState(null);
 	const [isSearchSubmitted, setIsSearchSubmitted] = useState(false);
 
-	const bottomSheetModalRef = useRef(null);
 
 	useEffect(() => {
         if (focusInput) {
@@ -43,16 +42,16 @@ const SearchStocks = ({ focusInput }) => {
 			const cryptoResults = await cryptoData.json();
 
 			const combinedResults = [
-				// ...stockResults.bestMatches.map(match => ({
-				// symbol: match["1. symbol"],
-				// name: match["2. name"],
-				// type: 'stock',
-				// })),
+				...stockResults.bestMatches.map(match => ({
+				symbol: match["1. symbol"],
+				name: match["2. name"],
+				type: 'stock',
+				})),
 				...cryptoResults.coins.map(coin => ({
 				symbol: coin.symbol, // or the appropriate identifier for the coin
 				name: coin.name,
-				id: coin.id
-				// type: 'crypto',
+				id: coin.id,
+				type: 'crypto',
 				})),
 			];
 
@@ -80,15 +79,14 @@ const SearchStocks = ({ focusInput }) => {
 							key={index}
 							style={styles.resultItem}
 							onPress={() => {
-								// if (match.type === 'stock') {
-								// 	navigation.navigate('StockDetail', { stockSymbol: match.symbol });
-								// } else {
+								if (match.type === 'stock') {
+									navigation.navigate('StockDetail', { stockSymbol: match.symbol });
+								} else {
 								navigation.navigate('CryptoDetail', { cryptoID: match.id, cryptoSymbol: match.symbol });
+								}
 								
 								clearInput();
-								if (bottomSheetModalRef.current) {
-									bottomSheetModalRef.current.dismiss();
-								  }
+								
 							}}>
 							<Text style={styles.resultSymbol}>{match.symbol}</Text>
 							<Text style={styles.resultName}>{match.name}</Text>
@@ -109,7 +107,7 @@ const SearchStocks = ({ focusInput }) => {
 						<TextInput
 							ref={searchInputRef}
 							style={styles.searchInput}
-							placeholder="Company or coin"
+							placeholder="Search for company or coin"
 							placeholderTextColor="#888"
 							value={searchTerm}
 							onChangeText={handleSearchChange}

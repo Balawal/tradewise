@@ -93,7 +93,7 @@ const Chart = ({ stockSymbol}) => {
   return (
     <View style={styles.container}>
       <TimeframeButtons onSelectTimeframe={setSelectedTimeframe} buttonColor={graphColor} selectedTimeframe={selectedTimeframe} setSelectedTimeframe={setSelectedTimeframe} />
-      <View style={styles.infoContainer}>
+      <View>
           <Text style={styles.returnLabel}>Return </Text>
           <Text style={[styles.returnText, { color: graphColor }]}>{priceDifference.toFixed(2)} ({percentChange.toFixed(2)}%)</Text>
         </View>
@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   chartContainer: {
-    height: '110%',
-    width: '19%',
+    height: '120%',
+    width: '10%',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
@@ -183,8 +183,7 @@ const styles = StyleSheet.create({
   returnText: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 10,
-    marginTop: 10
+    marginBottom: 2,
   },
   infoContainer: {
     flexDirection: 'row',
@@ -194,8 +193,7 @@ const styles = StyleSheet.create({
     color: 'gray', 
     fontSize: 16, 
     fontWeight: 'bold',
-    marginLeft: -30,
-    marginTop: 10
+    marginLeft: -60,
   },
 });
 

@@ -12,6 +12,7 @@ import WatchList from '../../../components/stockdetails/watchList';
 const StockDetailScreen = ({ route, navigation }) => {
   const { stockSymbol } = route.params;
   const [stockData, setStockData] = useState(null);
+  const [price, setPrice] = useState(null);
   const [movingAverages, setMovingAverages] = useState(null);
   const [volume, setVolume] = useState(null);
   const [earnings, setEarnings] = useState(null);
@@ -25,6 +26,10 @@ const StockDetailScreen = ({ route, navigation }) => {
         const response = await fetch(`http://192.168.1.118:3000/api/stock-fundamentals?symbol=${stockSymbol}`);
         const data = await response.json();
         setStockData(data);
+
+        const traderesponse = await fetch(`http://192.168.1.118:3000/api/latest-trade?symbols=${stockSymbol}`);
+        const tradeData = await traderesponse.json();
+        setPrice(tradeData);
 
         const maResponse = await fetch(`http://192.168.1.118:3000/api/stock-moving-averages?symbol=${stockSymbol}`);
         const maData = await maResponse.json();
@@ -118,7 +123,7 @@ const StockDetailScreen = ({ route, navigation }) => {
       return (num / 1e6).toFixed(1) + 'M'; 
     } else if (num >= 1e3) {
       return (num / 1e3).toFixed(1) + 'K'; 
-    } else {
+    } else{
       return num.toString();  
     }
   };
@@ -145,9 +150,8 @@ const StockDetailScreen = ({ route, navigation }) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back-ios" size="25" color="white" />
             </TouchableOpacity>
-            <WatchList stockSymbol={stockSymbol} stockName={stockData.Name} stockPrice={<LastPrice stockSymbol={stockSymbol} />}/>
+            <WatchList symbol={stockSymbol} name={stockData.Name} price={price.trade.p} type="stock" />
           </View>
-            
             <Text style={styles.name}>{stockData.Name || "None"}</Text>
             <LastPrice stockSymbol={stockSymbol} />
             <Chart stockSymbol={stockSymbol} />

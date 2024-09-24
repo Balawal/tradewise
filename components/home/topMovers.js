@@ -23,7 +23,7 @@ const TopMovers = () => {
 	);
 
 	const bottomSheetModalRef = useRef(null);
-	const snapPoints = ["83%"];
+	const snapPoints = ["80%"];
 
 	const handlePresentModal = () => {
 		console.log("Present modal triggered");
@@ -125,14 +125,14 @@ const styles = StyleSheet.create({
 		fontSize: 24,
 		color: "white",
 		fontWeight: "bold",
-		marginBottom: 5,
+		marginBottom: 10,
 		marginTop: -10,
 		marginLeft: 15,
 	},
 	subHeader: {
 		fontSize: 14,
 		color: "grey",
-		marginBottom: 20,
+		marginBottom: 5,
 		marginLeft: 15,
 	},
 	bottomSheetBackground: {

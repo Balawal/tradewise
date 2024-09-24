@@ -33,10 +33,11 @@ const shuffleArray = (array) => {
 };
 
 
-export const StockCards = ({ stocks, barData, displayVolume }) => {
-    const navigation = useNavigation();
 
-    return (
+export const StockCards = ({ stocks, barData, displayVolume }) => {
+  const navigation = useNavigation();
+    
+  return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cardsWrapper}>
       {stocks.map(stock => (
         <TouchableOpacity
@@ -97,9 +98,21 @@ export const StockCards = ({ stocks, barData, displayVolume }) => {
   );
 };
   
-export const CryptoCards = ({ cryptos, barDataCrypto }) => (
+export const CryptoCards = ({ cryptos, barDataCrypto }) => {
+  const navigation = useNavigation();
+
+  return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cardsWrapper}>
     {cryptos.map(crypto => (
+      <TouchableOpacity
+      key={crypto.symbol}
+      style={styles.card}
+      onPress={() => {
+        const cryptoID = crypto.symbol.split('/')[0];
+        // Navigate to the CryptoDetail screen and pass the stock symbol
+        navigation.navigate('CryptoDetail', { cryptoID, cryptoSymbol: cryptoID });
+      }}
+    >
       <View key={crypto.symbol} style={styles.card}>
         <Text style={[styles.cardSymbol, { color: crypto.isGainer ? 'white' : 'white' }]}>
           {crypto.symbol}
@@ -144,9 +157,12 @@ export const CryptoCards = ({ cryptos, barDataCrypto }) => (
           {crypto.isGainer ? `+${crypto.percent_change?.toFixed(2)}` : `${crypto.percent_change?.toFixed(2)}`}%
         </Text>
       </View>
+      </TouchableOpacity>
     ))}
   </ScrollView>
-);
+  );
+    
+  };
 
 const styles = StyleSheet.create({
     header: {
@@ -191,7 +207,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold',
         marginLeft: 10,
-        marginTop: 5
+        marginTop: 10
     },
     cardPrice: {
         fontSize: 20,

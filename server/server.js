@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 
-const COINGECKO_API_KEY = 'CG-tKA862uwVTVcwMWDD6qKWXoL';
+const COINGECKO_API_KEY = 'CG-p6TWwyFCCqveXiD41PpoE1CV';
 
 //Endpoint to get all crypto news 
 app.get('/api/news-crypto', async (req, res) => {

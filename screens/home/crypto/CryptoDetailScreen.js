@@ -8,16 +8,25 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 // import LastPrice from '../../../components/stockdetails/lastPrice';
 // import WatchList from '../../../components/stockdetails/watchList';
 import ChartCrypto from '../../../components/cryptodetails/chartCrypto';
+import WatchList from '../../../components/stockdetails/watchList';
 
 
 const CryptoDetailScreen = ({ route }) => {
   const navigation = useNavigation();
-  const { cryptoID } = route.params;
-  console.log("Crypto ID passed:", cryptoID);
-  const { cryptoSymbol } = route.params;
-  console.log("Crypto symbol passed:", cryptoSymbol);
+  const { cryptoID, cryptoSymbol } = route.params;
+ 
+  console.log("Crypto ID passed::: ", cryptoID);
+  console.log("Crypto symbol passed::: ", cryptoSymbol);
+  
   const [cryptoData, setCryptoData] = useState(null);
   const [newsData, setNewsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [backButtonColor, setBackButtonColor] = useState('white'); // Default color for back button
+
+  // Callback function to handle color change from ChartCrypto
+  const handleColorChange = (color) => {
+    setBackButtonColor(color);
+  };
 
   useEffect(() => {
     const fetchCryptoData = async () => {
@@ -32,11 +41,21 @@ const CryptoDetailScreen = ({ route }) => {
 
       } catch (error) {
         console.error('Error fetching crypto data:', error);
+      }finally {
+        setLoading(false);
       }
     };
 
     fetchCryptoData();
-  }, [cryptoID]);
+  }, [cryptoID, cryptoSymbol]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <MaterialIndicator color="white" />
+      </View>
+    );
+  }
 
   
 
@@ -116,29 +135,29 @@ const CryptoDetailScreen = ({ route }) => {
           <>
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name="arrow-back-ios" size="25" color="white" />
+              <Icon name="arrow-back-ios" size="25" color={backButtonColor} />
             </TouchableOpacity>
+            <WatchList symbol={(cryptoData.symbol).toUpperCase()} name={cryptoData.name} price={cryptoData.market_data.current_price.usd.toLocaleString()} type="crypto" color={backButtonColor}/>
           </View>
-            
             <Text style={styles.name}>{cryptoData.name}</Text>
             <Text style={styles.price}>
                 ${cryptoData.market_data.current_price.usd.toLocaleString()}
             </Text>
-            <ChartCrypto cryptoID={cryptoID} />
+            <ChartCrypto cryptoID={cryptoID} onColorChange={handleColorChange}/>
             
             <Text style={styles.keystats}>Key Stats</Text>
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>TICKER</Text>
-                <Text style={styles.under}>{cryptoData.symbol}</Text>
+                <Text style={styles.under}>{(cryptoData.symbol || "None").toUpperCase()}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>MARKET CAP</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.market_data.market_cap.usd)}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.market_data.market_cap.usd) || "None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>RANK</Text>
-                <Text style={styles.under}>{cryptoData.market_data.market_cap_rank}</Text>
+                <Text style={styles.under}>{cryptoData.market_data.market_cap_rank || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -146,15 +165,15 @@ const CryptoDetailScreen = ({ route }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>BTC CONVERSION</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.market_data.current_price.btc)}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.market_data.current_price.btc) || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>SUPPLY</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.market_data.circulating_supply)}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.market_data.circulating_supply) || "None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>VOLUME</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.market_data.total_volume.usd)}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.market_data.total_volume.usd) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -163,15 +182,15 @@ const CryptoDetailScreen = ({ route }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>POSITIVE</Text>
-                <Text style={styles.under}>{cryptoData.sentiment_votes_up_percentage}%</Text>
+                <Text style={styles.under}>{cryptoData.sentiment_votes_up_percentage || "None"}%</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>NEGATIVE</Text>
-                <Text style={styles.under}>{cryptoData.sentiment_votes_down_percentage}%</Text>
+                <Text style={styles.under}>{cryptoData.sentiment_votes_down_percentage || "None"}%</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>X FOLLOWERS</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.community_data.twitter_followers)}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.community_data.twitter_followers) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -180,30 +199,30 @@ const CryptoDetailScreen = ({ route }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>BLOCK TIME</Text>
-                <Text style={styles.under}>{cryptoData.block_time_in_minutes}</Text>
+                <Text style={styles.under}>{cryptoData.block_time_in_minutes || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>HASHING ALGO</Text>
-                <Text style={styles.under}>{cryptoData.hashing_algorithm}</Text>
+                <Text style={styles.under}>{cryptoData.hashing_algorithm || "None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>ALL TIME HIGH</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.market_data.ath.usd)}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.market_data.ath.usd) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>VALUATION</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.market_data.fully_diluted_valuation.usd)}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.market_data.fully_diluted_valuation.usd) || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>GENESIS DATE</Text>
-                <Text style={styles.under}>{cryptoData.genesis_date}</Text>
+                <Text style={styles.under}>{cryptoData.genesis_date || "None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>ALL TIME LOW</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.market_data.atl.usd)}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.market_data.atl.usd) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -244,8 +263,9 @@ const styles = StyleSheet.create({
     marginVertical: 20, // Adjust space around the chart
   },
   header:{
-    flexDirection: 'row',     // Arrange items in a row
-    justifyContent: 'space-between', // Space out items to the edges
+    flexDirection: 'row',    
+    justifyContent: 'space-between', 
+    paddingHorizontal: 10,    
     paddingTop: 35, 
   },
   goBack: {

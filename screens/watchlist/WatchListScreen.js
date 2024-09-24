@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ScrollView } from 'react-native';
 import { collection, getDocs } from "firebase/firestore"; 
 import { db } from '../../config/firebase'; 
 
@@ -8,23 +8,25 @@ const WatchlistScreen = () => {
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      const querySnapshot = await getDocs(collection(db, "favorites"));
-      const favoriteStocks = [];
+      const querySnapshot = await getDocs(collection(db, "watchList"));
+      const favorites = [];
       querySnapshot.forEach((doc) => {
-        favoriteStocks.push(doc.data());
+        favorites.push(doc.data());
       });
-      setFavorites(favoriteStocks);
+      setFavorites(favorites);
     };
 
     fetchFavorites();
   }, []);
 
-  const renderStockItem = ({ item }) => (
+  const renderFavoriteItem = ({ item }) => (
     <View>
-      <View style={styles.stockCard}>
-        <Text style={styles.stockSymbol}>{item.stockSymbol}</Text>
-        <Text style={styles.stockName}>{item.stockName}</Text>
-        <Text style={styles.stockPrice}>{item.stockPrice}</Text>
+      <View style={styles.card}>
+        <View style={styles.info}>
+          <Text style={styles.symbol}>{item.symbol}</Text>
+          <Text style={styles.name}>{item.name}</Text>
+        </View>
+        <Text style={styles.price}>${item.price}</Text>
       </View>
       <View style={styles.separator} />
     </View>
@@ -32,12 +34,13 @@ const WatchlistScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Watchlist</Text>
-      <Text style={styles.subHeader}>Your personalized stocks and crypto at a glance.</Text>
       <FlatList
         data={favorites}
-        keyExtractor={(item) => item.stockSymbol}
-        renderItem={renderStockItem}
+        keyExtractor={(item) => item.symbol}
+        renderItem={renderFavoriteItem}
+        ListHeaderComponent={() => (
+          <Text style={styles.header}>Watchlist</Text>
+        )}
       />
     </View>
   );
@@ -53,32 +56,37 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: 'white',
         fontWeight: 'bold',
-        marginBottom: 5,
+        marginBottom: 20,
         marginTop: 40,
         marginLeft: 15
       },
       subHeader: {
         fontSize: 14,
         color: 'grey',
-        marginBottom: 20,
+        marginBottom: 30,
         marginLeft: 15
       },
-      stockCard: {
-        padding: 15,
+      card: {
+        flexDirection: 'row', // Align items in a row
+        justifyContent: 'space-between', // Push price to the other end
+        alignItems: 'center', // Center align vertically
+        padding: 8,
         marginHorizontal: 15,
-        borderRadius: 8,         
+        borderRadius: 8,  
       },
-      stockSymbol: {
+      info: {
+        flexDirection: 'column', // Stack symbol and name vertically
+      },
+      symbol: {
         color: 'white',          
-        fontSize: 18,
-        fontWeight: 'bold',      
+        fontSize: 20,     
       },
-      stockName: {
+      name: {
         color: 'grey',         
-        fontSize: 16,
+        fontSize: 13,
       },
-      stockPrice: {
-        color: 'green',         
+      price: {
+        color: 'white',         
         fontSize: 16,
       },
       separator: {

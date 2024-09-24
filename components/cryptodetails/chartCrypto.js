@@ -28,7 +28,7 @@ const TimeframeButtons = ({ onSelectTimeframe, buttonColor, selectedTimeframe, s
   };
   
 
-const ChartCrypto = ({cryptoID}) => {
+const ChartCrypto = ({cryptoID, onColorChange}) => {
   const [chartData, setChartData] = useState(null);
   const [percentChange, setPercentChange] = useState(0);
   const [priceDifference, setPriceDifference] = useState(0);
@@ -61,6 +61,11 @@ const ChartCrypto = ({cryptoID}) => {
 
       const color = change >= 0 ? 'green' : 'red';
       setGraphColor(color);
+
+      if (onColorChange) {
+        onColorChange(color);
+      }
+
       setChartData({
         datasets: [{ data }]
       });
@@ -82,6 +87,10 @@ const ChartCrypto = ({cryptoID}) => {
   return (
     <View style={styles.container}>
       <TimeframeButtons onSelectTimeframe={setSelectedTimeframe} buttonColor={graphColor} selectedTimeframe={selectedTimeframe} setSelectedTimeframe={setSelectedTimeframe} />
+      <View>
+          <Text style={styles.returnLabel}>Return</Text>
+          <Text style={[styles.returnText, { color: graphColor }]}>{priceDifference.toFixed(2)} ({percentChange.toFixed(2)}%)</Text>
+        </View>
       <View style={styles.chartContainer}>
         <LineChart
           data={chartData}
@@ -107,10 +116,6 @@ const ChartCrypto = ({cryptoID}) => {
           withOuterLines={false}
           withShadow={false}
         />
-        {/* <View style={styles.infoContainer}>
-          <Text style={styles.returnLabel}>Return </Text>
-          <Text style={[styles.returnText, { color: graphColor }]}>{priceDifference.toFixed(2)} ({percentChange.toFixed(2)}%)</Text>
-        </View> */}
       </View>
     </View>
   );
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     height: '120%',
-    width: '67%',
+    width: '13%',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
@@ -172,8 +177,7 @@ const styles = StyleSheet.create({
   returnText: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 10,
-    marginTop: 10
+    marginBottom: 1,
   },
   infoContainer: {
     flexDirection: 'row',
@@ -183,8 +187,7 @@ const styles = StyleSheet.create({
     color: 'gray', 
     fontSize: 16, 
     fontWeight: 'bold',
-    marginLeft: 5,
-    marginTop: 10
+    marginLeft: -60,
   },
 });
 
