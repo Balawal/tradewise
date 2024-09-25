@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Dimensions, Text, StyleSheet, TouchableOpacity, PanResponder, Animated } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import axios from 'axios';
+import { MaterialIndicator } from 'react-native-indicators';
 
 const TimeframeButtons = ({ onSelectTimeframe, buttonColor, selectedTimeframe, setSelectedTimeframe }) => {
     return (
@@ -10,9 +11,10 @@ const TimeframeButtons = ({ onSelectTimeframe, buttonColor, selectedTimeframe, s
           <TouchableOpacity
             key={label}
             style={styles.button}
-            onPress={() => {
-              setSelectedTimeframe(label);
-              onSelectTimeframe(label);
+            onPress={() => { 
+              if (label !== selectedTimeframe) {// Only set if it's a new timeframe
+                onSelectTimeframe(label);
+              }
             }}
           >
             <View style={[
@@ -28,16 +30,18 @@ const TimeframeButtons = ({ onSelectTimeframe, buttonColor, selectedTimeframe, s
   };
   
 
-const ChartCrypto = ({cryptoID, onColorChange}) => {
+const ChartCrypto = ({cryptoID, onColorChange, selectedTimeframe, setSelectedTimeframe, graphColor}) => {
   const [chartData, setChartData] = useState(null);
   const [percentChange, setPercentChange] = useState(0);
   const [priceDifference, setPriceDifference] = useState(0);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
-  const [graphColor, setGraphColor] = useState('white'); 
+
   const { width } = Dimensions.get('window');
   const chartWidth = width * 0.70; 
+  const [isLoading, setIsLoading] = useState(false);
+  const chartDataRef = useRef(null);
 
   const fetchChartData = async (timeframe) => {
+    setIsLoading(true);
     try {
       const endpointMap = {
         '1D': '/api/crypto-one-day-bars',
@@ -60,17 +64,18 @@ const ChartCrypto = ({cryptoID, onColorChange}) => {
       setPriceDifference(priceDiff);
 
       const color = change >= 0 ? 'green' : 'red';
-      setGraphColor(color);
 
       if (onColorChange) {
         onColorChange(color);
       }
-
       setChartData({
         datasets: [{ data }]
       });
     } catch (error) {
       console.error(`Error fetching ${timeframe} bars data:`, error);
+    }
+    finally {
+      setIsLoading(false); // Always set loading to false at the end
     }
   };
 
@@ -79,6 +84,14 @@ const ChartCrypto = ({cryptoID, onColorChange}) => {
     console.log("Selected timeframe: ", selectedTimeframe);
     console.log("Graph color: ", graphColor);
   }, [selectedTimeframe, cryptoID]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <MaterialIndicator color="white" />
+      </View>
+    );
+  }
 
   if (!chartData) {
     return <View style={styles.centered}><Text>Loading chart...</Text></View>;
@@ -152,7 +165,7 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     height: '120%',
-    width: '13%',
+    width: '6%',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
@@ -177,7 +190,8 @@ const styles = StyleSheet.create({
   returnText: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 1,
+    marginVertical: -20,
+    marginLeft: 10
   },
   infoContainer: {
     flexDirection: 'row',
@@ -187,7 +201,13 @@ const styles = StyleSheet.create({
     color: 'gray', 
     fontSize: 16, 
     fontWeight: 'bold',
-    marginLeft: -60,
+    marginLeft: -50,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000000',
   },
 });
 

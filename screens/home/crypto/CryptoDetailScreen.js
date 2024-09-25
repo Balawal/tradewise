@@ -3,12 +3,10 @@ import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity
 import { MaterialIndicator } from 'react-native-indicators';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-// import { LineChart } from 'react-native-chart-kit';
-// import Chart from '../../../components/stockdetails/chart' 
-// import LastPrice from '../../../components/stockdetails/lastPrice';
-// import WatchList from '../../../components/stockdetails/watchList';
 import ChartCrypto from '../../../components/cryptodetails/chartCrypto';
 import WatchList from '../../../components/stockdetails/watchList';
+// import { doc, setDoc } from "firebase/firestore"; 
+// import { db } from '../../../config/firebase';
 
 
 const CryptoDetailScreen = ({ route }) => {
@@ -21,10 +19,14 @@ const CryptoDetailScreen = ({ route }) => {
   const [cryptoData, setCryptoData] = useState(null);
   const [newsData, setNewsData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [backButtonColor, setBackButtonColor] = useState('white'); // Default color for back button
+  const [backButtonColor, setBackButtonColor] = useState(''); // Default color for back button
+
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
+  const [graphColor, setGraphColor] = useState('green');
 
   // Callback function to handle color change from ChartCrypto
   const handleColorChange = (color) => {
+    setGraphColor(color);
     setBackButtonColor(color);
   };
 
@@ -34,6 +36,8 @@ const CryptoDetailScreen = ({ route }) => {
         const response = await fetch(`http://192.168.1.118:3000/api/crypto-coin-data?coinName=${cryptoID}`);
         const data = await response.json();
         setCryptoData(data);
+
+        //await updateFirestorePrice(data.market_data.current_price.usd);
 
         const newsResponse = await fetch(`http://192.168.1.118:3000/api/news-crypto?symbols=${cryptoSymbol}`);
         const newsData = await newsResponse.json();
@@ -46,7 +50,20 @@ const CryptoDetailScreen = ({ route }) => {
       }
     };
 
+    // const updateFirestorePrice = async (price) => {
+    //   const docRef = doc(db, "watchList", cryptoSymbol.toUpperCase());
+    //   await setDoc(docRef, {
+    //     symbol: cryptoSymbol.toUpperCase(),
+    //     name: cryptoData.name,
+    //     price: price,
+    //     type: "crypto"
+    //   }, { merge: true }); // Use merge to update existing fields without overwriting the entire document
+    // };
+
     fetchCryptoData();
+    // const intervalId = setInterval(fetchCryptoData, 60000); // 300000 ms = 5 minutes
+
+    // return () => clearInterval(intervalId);
   }, [cryptoID, cryptoSymbol]);
 
   if (loading) {
@@ -143,7 +160,7 @@ const CryptoDetailScreen = ({ route }) => {
             <Text style={styles.price}>
                 ${cryptoData.market_data.current_price.usd.toLocaleString()}
             </Text>
-            <ChartCrypto cryptoID={cryptoID} onColorChange={handleColorChange}/>
+            <ChartCrypto cryptoID={cryptoID} onColorChange={handleColorChange} selectedTimeframe={selectedTimeframe} setSelectedTimeframe={setSelectedTimeframe} graphColor={graphColor} />
             
             <Text style={styles.keystats}>Key Stats</Text>
             <View style={styles.row}>

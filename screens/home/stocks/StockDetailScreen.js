@@ -19,6 +19,16 @@ const StockDetailScreen = ({ route, navigation }) => {
   const [sentiment, setSentiment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sixMBarsData, setSixMBarData] = useState({});
+  
+  const [backButtonColor, setBackButtonColor] = useState(''); 
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
+  const [graphColor, setGraphColor] = useState('green');
+
+  // Callback function to handle color change from ChartCrypto
+  const handleColorChange = (color) => {
+    setGraphColor(color);
+    setBackButtonColor(color);
+  };
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -148,13 +158,13 @@ const StockDetailScreen = ({ route, navigation }) => {
           <>
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name="arrow-back-ios" size="25" color="white" />
+              <Icon name="arrow-back-ios" size="25" color={backButtonColor}  />
             </TouchableOpacity>
-            <WatchList symbol={stockSymbol} name={stockData.Name} price={price.trade.p} type="stock" />
+            <WatchList symbol={stockSymbol} name={stockData.Name} price={price.trade.p} type="stock" color={backButtonColor} />
           </View>
             <Text style={styles.name}>{stockData.Name || "None"}</Text>
             <LastPrice stockSymbol={stockSymbol} />
-            <Chart stockSymbol={stockSymbol} />
+            <Chart stockSymbol={stockSymbol} onColorChange={handleColorChange} selectedTimeframe={selectedTimeframe} setSelectedTimeframe={setSelectedTimeframe} graphColor={graphColor}/>
             
             <Text style={styles.keystats}>Key Stats</Text>
             <View style={styles.row}>

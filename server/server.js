@@ -64,7 +64,7 @@ app.get('/api/crypto-one-day-bars', async (req, res) => {
     const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
       headers: {
         accept: 'application/json',
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
+        'x-cg-demo-api-key': COINGECKO_API_KEY,
       },
     });
     const coinsList = coinsListResponse.data;
@@ -120,7 +120,7 @@ app.get('/api/crypto-one-week-bars', async (req, res) => {
     const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
       headers: {
         accept: 'application/json',
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
+        'x-cg-demo-api-key': COINGECKO_API_KEY,
       },
     });
     const coinsList = coinsListResponse.data;
@@ -176,7 +176,7 @@ app.get('/api/crypto-one-month-bars', async (req, res) => {
     const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
       headers: {
         accept: 'application/json',
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
+        'x-cg-demo-api-key': COINGECKO_API_KEY,
       },
     });
     const coinsList = coinsListResponse.data;
@@ -232,7 +232,7 @@ app.get('/api/crypto-three-month-bars', async (req, res) => {
     const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
       headers: {
         accept: 'application/json',
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
+        'x-cg-demo-api-key': COINGECKO_API_KEY,
       },
     });
     const coinsList = coinsListResponse.data;
@@ -288,7 +288,7 @@ app.get('/api/crypto-six-month-bars', async (req, res) => {
     const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
       headers: {
         accept: 'application/json',
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
+        'x-cg-demo-api-key': COINGECKO_API_KEY,
       },
     });
     const coinsList = coinsListResponse.data;
@@ -344,7 +344,7 @@ app.get('/api/crypto-one-year-bars', async (req, res) => {
     const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
       headers: {
         accept: 'application/json',
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
+        'x-cg-demo-api-key': COINGECKO_API_KEY,
       },
     });
     const coinsList = coinsListResponse.data;
@@ -405,7 +405,7 @@ app.get('/api/crypto-coin-data', async (req, res) => {
     const coinsListResponse = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
       headers: {
         accept: 'application/json',
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
+        'x-cg-demo-api-key': COINGECKO_API_KEY,
       },
     });
     coinsList = coinsListResponse.data;
