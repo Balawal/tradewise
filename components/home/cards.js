@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useNavigation } from '@react-navigation/native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
 
 const formatNum = (num) => {
   if (num >= 1e12) {
@@ -191,6 +190,7 @@ const styles = StyleSheet.create({
         height: 180, 
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
+        marginBottom: 15
     },
     chartWrapper: {
         width: '50%',

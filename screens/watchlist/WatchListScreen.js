@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ScrollView } from 'react-native';
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, onSnapshot } from "firebase/firestore"; 
 import { db } from '../../config/firebase'; 
+import LastPrice from '../../components/stockdetails/lastPrice';
 
 const WatchlistScreen = () => {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    const fetchFavorites = async () => {
-      const querySnapshot = await getDocs(collection(db, "watchList"));
-      const favorites = [];
-      querySnapshot.forEach((doc) => {
-        favorites.push(doc.data());
-      });
-      setFavorites(favorites);
-    };
+    const unsubscribe = onSnapshot(collection(db, "watchList"), (snapshot) => {
+      const updatedFavorites = snapshot.docs.map(doc => doc.data());
+      setFavorites(updatedFavorites);
+      console.log("Real-time watchlist data::: ", updatedFavorites);
+    });
 
-    fetchFavorites();
+    // Cleanup listener on unmount
+    return () => unsubscribe();
   }, []);
 
   const renderFavoriteItem = ({ item }) => (
@@ -26,7 +25,13 @@ const WatchlistScreen = () => {
           <Text style={styles.symbol}>{item.symbol}</Text>
           <Text style={styles.name}>{item.name}</Text>
         </View>
-        <Text style={styles.price}>${item.price}</Text>
+        {item.type === 'stock' ? (
+          // Render the LastPrice component for stocks
+          <LastPrice stockSymbol={item.symbol} containerStyle={styles.priceContainer} textStyle={styles.price}/>
+        ) : (
+          // Render static price for crypto
+          <Text style={styles.price}>${parseFloat(item.price).toFixed(2)}</Text>
+        )}
       </View>
       <View style={styles.separator} />
     </View>
@@ -94,6 +99,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#111', 
         marginVertical: 10,
         marginHorizontal: 15,
+      },
+      priceContainer: {
+        alignItems: 'flex-end', // Align the price to the end
+        width: 100, // Optional: adjust this width based on your design
       },
   });  
 

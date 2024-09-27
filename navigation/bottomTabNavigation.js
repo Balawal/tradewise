@@ -34,10 +34,10 @@ const BottomTabNavigation = () => {
                     } else if (route.name === 'Cash') {
                         iconName = 'wallet';
                         return <FontAwesome5 name={iconName} size={24} color={color} />;
-                    } else if (route.name === 'Search') {
-                        iconName = 'search';
+                    } else if (route.name === 'Notifications') {
+                        iconName = 'bell';
                         return <FontAwesome5 name={iconName} size={24} color={color} />;
-                    } else if (route.name === 'Messages') {
+                    } else if (route.name === 'Social') {
                         return <Ionicons name="chatbox-ellipses-sharp" size={24} color={color} />;
                     } else if (route.name === 'Settings') {
                         return <Feather name="user" size={24} color={color} />;
@@ -47,8 +47,8 @@ const BottomTabNavigation = () => {
         >
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Cash" component={WatchListScreen}/>
-            <Tab.Screen name="Search" component={SearchScreen} />
-            <Tab.Screen name="Messages" component={SocialScreen} />
+            <Tab.Screen name="Notifications" component={SearchScreen} />
+            <Tab.Screen name="Social" component={SocialScreen} />
             <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
     );

@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
 		height: 180,
 		justifyContent: "flex-start",
 		alignItems: "flex-start",
+		marginBottom: 5
 	},
 	chartWrapper: {
 		width: "50%",
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
 	subHeader: {
 		fontSize: 14,
 		color: "grey",
-		marginBottom: 20,
+		marginBottom: -1,
 		marginLeft: 15,
 	},
 });

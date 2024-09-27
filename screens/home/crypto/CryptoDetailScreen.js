@@ -5,8 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ChartCrypto from '../../../components/cryptodetails/chartCrypto';
 import WatchList from '../../../components/stockdetails/watchList';
-// import { doc, setDoc } from "firebase/firestore"; 
-// import { db } from '../../../config/firebase';
 
 
 const CryptoDetailScreen = ({ route }) => {
@@ -37,8 +35,6 @@ const CryptoDetailScreen = ({ route }) => {
         const data = await response.json();
         setCryptoData(data);
 
-        //await updateFirestorePrice(data.market_data.current_price.usd);
-
         const newsResponse = await fetch(`http://192.168.1.118:3000/api/news-crypto?symbols=${cryptoSymbol}`);
         const newsData = await newsResponse.json();
         setNewsData(newsData);
@@ -50,20 +46,7 @@ const CryptoDetailScreen = ({ route }) => {
       }
     };
 
-    // const updateFirestorePrice = async (price) => {
-    //   const docRef = doc(db, "watchList", cryptoSymbol.toUpperCase());
-    //   await setDoc(docRef, {
-    //     symbol: cryptoSymbol.toUpperCase(),
-    //     name: cryptoData.name,
-    //     price: price,
-    //     type: "crypto"
-    //   }, { merge: true }); // Use merge to update existing fields without overwriting the entire document
-    // };
-
     fetchCryptoData();
-    // const intervalId = setInterval(fetchCryptoData, 60000); // 300000 ms = 5 minutes
-
-    // return () => clearInterval(intervalId);
   }, [cryptoID, cryptoSymbol]);
 
   if (loading) {

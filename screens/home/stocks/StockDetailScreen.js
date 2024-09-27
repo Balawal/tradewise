@@ -163,7 +163,7 @@ const StockDetailScreen = ({ route, navigation }) => {
             <WatchList symbol={stockSymbol} name={stockData.Name} price={price.trade.p} type="stock" color={backButtonColor} />
           </View>
             <Text style={styles.name}>{stockData.Name || "None"}</Text>
-            <LastPrice stockSymbol={stockSymbol} />
+            <LastPrice stockSymbol={stockSymbol} containerStyle={styles.containerLP} textStyle={styles.latestTrade} />
             <Chart stockSymbol={stockSymbol} onColorChange={handleColorChange} selectedTimeframe={selectedTimeframe} setSelectedTimeframe={setSelectedTimeframe} graphColor={graphColor}/>
             
             <Text style={styles.keystats}>Key Stats</Text>
@@ -174,11 +174,11 @@ const StockDetailScreen = ({ route, navigation }) => {
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>MARKET CAP</Text>
-                <Text style={styles.under}>{formatNum(stockData.MarketCapitalization) || "None"}</Text>
+                <Text style={styles.under}>{(stockData.MarketCapitalization) || "None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>VOLUME</Text>
-                <Text style={styles.under}>{formatNum(volume?.mostRecent?.volume) || "None"}</Text>
+                <Text style={styles.under}>{(volume?.mostRecent?.volume) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -186,7 +186,7 @@ const StockDetailScreen = ({ route, navigation }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>OPEN</Text>
-                <Text style={styles.under}>{formatDecimal(volume?.mostRecent?.open) || "None"}</Text>
+                <Text style={styles.under}>{(volume?.mostRecent?.open) || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>PE RATIO</Text>
@@ -194,7 +194,7 @@ const StockDetailScreen = ({ route, navigation }) => {
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>AVG VOLUME</Text>
-                <Text style={styles.under}>{formatNum(volume?.averageVolumes?.avgVolume365) || "None"}</Text>
+                <Text style={styles.under}>{(volume?.averageVolumes?.avgVolume365) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -202,11 +202,11 @@ const StockDetailScreen = ({ route, navigation }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>CLOSE</Text>
-                <Text style={styles.under}>{formatDecimal(volume?.mostRecent?.close) || "None"}</Text>
+                <Text style={styles.under}>{(volume?.mostRecent?.close) || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>YTD CHANGE</Text>
-                <Text style={styles.under}>{formatDecimal(volume?.ytdChange) || "None"}%</Text>
+                <Text style={styles.under}>{(volume?.ytdChange) || "None"}%</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>EARNING DATE</Text>
@@ -253,7 +253,7 @@ const StockDetailScreen = ({ route, navigation }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>50 DAY MA</Text>
-                <Text style={styles.under}>{formatDecimal(movingAverages?.['50_day_SMA']) || "None"}</Text>
+                <Text style={styles.under}>{(movingAverages?.['50_day_SMA']) || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>FLOAT</Text>
@@ -261,14 +261,14 @@ const StockDetailScreen = ({ route, navigation }) => {
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>10D AVG VOL</Text>
-                <Text style={styles.under}>{formatNum(volume?.averageVolumes?.avgVolume10) || "None"}</Text>
+                <Text style={styles.under}>{(volume?.averageVolumes?.avgVolume10) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>200 DAY MA</Text>
-                <Text style={styles.under}>{formatDecimal(movingAverages?.['200_day_SMA']) || "None"}</Text>
+                <Text style={styles.under}>{(movingAverages?.['200_day_SMA']) || "None"}</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>BETA</Text>
@@ -276,7 +276,7 @@ const StockDetailScreen = ({ route, navigation }) => {
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>30D AVG VOL</Text>
-                <Text style={styles.under}>{formatNum(volume?.averageVolumes?.avgVolume30) || "None"}</Text>
+                <Text style={styles.under}>{(volume?.averageVolumes?.avgVolume30) || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />
@@ -458,6 +458,19 @@ const styles = StyleSheet.create({
     fontSize: 24,  // Larger font for the first title
     marginTop: 10,
     color: '#ffffff',
+  },
+  latestTrade: {
+    fontSize: 40,
+    marginVertical: 2,
+    color: 'white',
+    fontWeight: 'bold',
+    marginTop: 1,
+    marginBottom: 10,
+  },
+  containerLP: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#000', 
   },
 });
 
