@@ -17,6 +17,347 @@ app.use(express.json());
 
 const COINGECKO_API_KEY = 'CG-p6TWwyFCCqveXiD41PpoE1CV';
 
+
+//Endpoint for stock calculator
+app.get('/api/stock-calculator', async (req, res) => {
+  console.log('received request for stock calculator');
+  try {
+    const symbols = req.query.symbols;
+    const startDate = req.query.start;
+    
+    // Calculate yesterday's date as the end date
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const endDate = yesterday.toISOString().split('T')[0]; // Format as 'YYYY-MM-DD'
+
+    if (!startDate) {
+      return res.status(400).json({ error: 'Start date is required' });
+    }
+
+    const cacheKey = `bars-${symbols}-${startDate}-${endDate}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch stock price data
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbols}&start=${startDate}&end=${endDate}&timeframe=1Day&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+
+    const barsData = response.data.bars[symbols];
+    const firstBar = barsData[0];  
+    const lastBar = barsData[barsData.length - 1];  
+
+    if (!firstBar || !lastBar) {
+      return res.status(500).json({ error: `Insufficient data for ${symbols}` });
+    }
+
+    const investmentAmount = parseFloat(req.query.investment || 0);
+
+    // Calculate total shares
+    const totalShares = investmentAmount / firstBar.c;
+
+    // Calculate capital gain
+    const capitalGain = (lastBar.c - firstBar.c) * totalShares;
+
+    // Calculate total return
+    const totalReturn = (capitalGain / firstBar.c) * 100;
+
+    // Calculate annual return (CAGR)
+    const years = (new Date(endDate) - new Date(startDate)) / (365 * 24 * 60 * 60 * 1000);
+    const annualReturn = ((lastBar.c / firstBar.c) ** (1 / years) - 1) * 100;
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Calculate duration
+    const durationYears = end.getFullYear() - start.getFullYear();
+    const durationMonths = end.getMonth() - start.getMonth();
+    const durationDays = end.getDate() - start.getDate();
+
+    let yearsToDisplay = durationYears;
+    let monthsToDisplay = durationMonths;
+    let daysToDisplay = durationDays;
+
+    if (daysToDisplay < 0) {
+      monthsToDisplay--;
+      const lastMonthDate = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+      daysToDisplay += lastMonthDate;
+    }
+
+    if (monthsToDisplay < 0) {
+      yearsToDisplay--;
+      monthsToDisplay += 12;
+    }
+
+    const duration = {};
+    if (yearsToDisplay > 0) duration.years = yearsToDisplay;
+    if (monthsToDisplay > 0) duration.months = monthsToDisplay;
+    if (daysToDisplay >= 0) duration.days = daysToDisplay;
+
+    // Fetch and filter dividend data
+    const dividendResponse = await axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/${symbols}?apikey=${FIN_MODEL_API_KEY}`);
+
+    const filteredDividends = dividendResponse.data.historical.filter(dividend => {
+      const dividendDate = new Date(dividend.date);
+      return dividendDate >= new Date(startDate) && dividendDate <= new Date(endDate);
+    });
+
+    // Calculate total dividend
+    let totalDividend = 0;
+    filteredDividends.forEach(dividend => {
+      totalDividend += dividend.dividend * totalShares; // Dividend per share * total shares owned
+    });
+
+    // Calculate times distributed and dividend average
+    const timesDistributed = filteredDividends.length;
+    const dividendAverage = totalDividend / timesDistributed;
+
+    // Calculate total profit
+    const finalValueOfShares = lastBar.c * totalShares;
+    const totalProfit = (finalValueOfShares + totalDividend) - investmentAmount;
+
+    const responseData = {
+      symbol: symbols,
+      purchasePrice: firstBar.c,
+      currentPrice: lastBar.c,
+      totalShares: totalShares,
+      capitalGain: capitalGain,
+      totalProfit: totalProfit,
+      totalReturn: totalReturn,
+      annualReturn: annualReturn,
+      duration,
+      dividends: {
+        totalDividend: totalDividend.toFixed(2),
+        timesDistributed: timesDistributed,
+        dividendAverage: dividendAverage.toFixed(2),
+      }
+    };
+
+    cache.set(cacheKey, responseData);
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
+});
+
+
+
+//Endpoint for stock calculator with reinvestment
+app.get('/api/stock-calculator-reinvest', async (req, res) => {
+  console.log('received request for reinvesting stock calculator');
+  try {
+    const symbols = req.query.symbols;
+    const startDate = req.query.start;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const endDate = new Date(yesterday).toISOString().split('T')[0];
+    
+    const investmentAmount = parseFloat(req.query.investment || 0);
+    const contributionAmount = parseFloat(req.query.contribution || 0); // User-defined contribution amount
+    const contributionFrequency = req.query.frequency || 'monthly'; // Weekly, Bi-Weekly, Monthly, etc.
+    
+    if (!startDate) {
+      return res.status(400).json({ error: 'Start date is required' });
+    }
+
+    const cacheKey = `bars-${symbols}-${startDate}-${endDate}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.json(cachedData);
+    }
+
+    // Fetch stock price data
+    const response = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbols}&start=${startDate}&end=${endDate}&timeframe=1Day&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+
+    const barsData = response.data.bars[symbols];
+    const firstBar = barsData[0];  
+    const lastBar = barsData[barsData.length - 1];  
+
+    if (!firstBar || !lastBar) {
+      return res.status(500).json({ error: `Insufficient data for ${symbols}` });
+    }
+
+    // Calculate total shares from initial investment
+    const totalSharesInitial = investmentAmount / firstBar.c;
+
+    // Fetch dividend data
+    const dividendResponse = await axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/${symbols}?apikey=${FIN_MODEL_API_KEY}`);
+
+    const filteredDividends = dividendResponse.data.historical.filter(dividend => {
+      const dividendDate = new Date(dividend.date);
+      return dividendDate >= new Date(startDate) && dividendDate <= new Date(endDate);
+    });
+
+    const dividendDates = filteredDividends.map(dividend => dividend.date);
+    const dividendPrices = await getPriceOnDividendDates(symbols, dividendDates);
+
+    let totalDividend = 0;
+    let sharesFromDividends = 0;
+
+    // Calculate DRIP (shares from reinvested dividends)
+    filteredDividends.forEach(dividend => {
+      const dividendPrice = dividendPrices[dividend.date];  // Get price on dividend date
+      if (dividendPrice) {
+        const dividendShares = (dividend.dividend * totalSharesInitial) / dividendPrice;  // Calculate shares based on dividend date price
+        sharesFromDividends += dividendShares;
+        totalDividend += dividend.dividend * totalSharesInitial;  // Total dividend value
+      }
+    });
+
+    // Calculate periodic contributions
+    const contributionDates = generateContributionDates(startDate, endDate, contributionFrequency);
+    let contributionShares = 0;
+    let totalContributions = investmentAmount; // Start with initial investment
+
+    contributionDates.forEach((contributionDate) => {
+      const bar = barsData.find(b => new Date(b.t).toISOString().split('T')[0] === contributionDate);
+      if (bar) {
+        contributionShares += contributionAmount / bar.c;
+        totalContributions += contributionAmount; // Add to total contributions
+      }
+    });
+
+    // Subtract initial investment from total contributio
+
+    // Calculate total shares (initial + contribution shares + dividend reinvestment)
+    const totalShares = totalSharesInitial + contributionShares + sharesFromDividends;
+
+    // Final value of shares
+    const finalValueOfShares = totalShares * lastBar.c;
+
+    // Calculate total profit
+    const totalProfit = finalValueOfShares + totalDividend - totalContributions;
+
+    // Calculate capital gain
+    const capitalGain = (lastBar.c - firstBar.c) * totalShares;
+
+    // Calculate total return
+    const totalReturn = ((capitalGain / totalContributions) * 100);
+
+    // Calculate annual return (CAGR)
+    const years = (new Date(endDate) - new Date(startDate)) / (365 * 24 * 60 * 60 * 1000);
+    const annualReturn = ((finalValueOfShares / totalContributions) ** (1 / years) - 1) * 100;
+
+    // Calculate duration
+    const duration = calculateDuration(startDate, endDate);
+
+    finalContributions = totalContributions - investmentAmount;
+
+    const responseData = {
+      symbol: symbols,
+      purchasePrice: firstBar.c,
+      currentPrice: lastBar.c,
+      totalShares: totalShares,
+      capitalGain: capitalGain,
+      totalProfit: totalProfit,
+      totalReturn: totalReturn,
+      annualReturn: annualReturn,
+      duration,
+      dividends: {
+        totalDividend: totalDividend.toFixed(2),
+        timesDistributed: filteredDividends.length,
+        dividendAverage: (totalDividend / filteredDividends.length).toFixed(2),
+      },
+      periodicContributions: {
+        totalContribution: finalContributions.toFixed(2),
+        contributionShares: contributionShares.toFixed(4),
+      },
+      dripValue: (sharesFromDividends * lastBar.c).toFixed(2) // DRIP value
+    };
+
+    cache.set(cacheKey, responseData);
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
+});
+
+async function getPriceOnDividendDates(symbol, dividendDates) {
+  const dividendPrices = {};
+
+  // Loop through each dividend date to fetch historical prices
+  for (const date of dividendDates) {
+    const start = new Date(date);
+    const end = new Date(date);
+    start.setDate(start.getDate() - 1); // Fetch price one day before dividend date
+    end.setDate(end.getDate() + 1); // Fetch price one day after dividend date
+
+    // Fetch historical stock prices from Alpaca for the date range
+    const priceResponse = await axios.get(`https://data.alpaca.markets/v2/stocks/bars?symbols=${symbol}&start=${start.toISOString().split('T')[0]}&end=${end.toISOString().split('T')[0]}&timeframe=1Day&feed=iex`, {
+      headers: alpacaHeaders,
+    });
+
+    // If the price data exists for the symbol, store the close price for that day
+    if (priceResponse.data.bars[symbol]) {
+      const priceData = priceResponse.data.bars[symbol];
+      const closestBar = priceData.find(bar => new Date(bar.t).toISOString().split('T')[0] === date) || priceData[0];
+      dividendPrices[date] = closestBar ? closestBar.c : null;
+    }
+  }
+
+  return dividendPrices;
+}
+
+// Helper function to generate contribution dates based on the frequency
+function generateContributionDates(startDate, endDate, frequency) {
+  const contributions = [];
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= new Date(endDate)) {
+    contributions.push(currentDate.toISOString().split('T')[0]);
+    switch (frequency) {
+      case 'weekly':
+        currentDate.setDate(currentDate.getDate() + 7);
+        break;
+      case 'bi-weekly':
+        currentDate.setDate(currentDate.getDate() + 14);
+        break;
+      case 'monthly':
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        break;
+      case 'bi-monthly':
+        currentDate.setMonth(currentDate.getMonth() + 2);
+        break;
+      case 'annually':
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+        break;
+    }
+  }
+  return contributions;
+}
+
+// Helper function to calculate duration between dates
+function calculateDuration(startDate, endDate) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  let durationYears = end.getFullYear() - start.getFullYear();
+  let durationMonths = end.getMonth() - start.getMonth();
+  let durationDays = end.getDate() - start.getDate();
+
+  // Adjust for negative months or days
+  if (durationDays < 0) {
+    durationMonths -= 1;
+    durationDays += new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+  }
+  if (durationMonths < 0) {
+    durationYears -= 1;
+    durationMonths += 12;
+  }
+
+  return { years: durationYears, months: durationMonths, days: durationDays };
+}
+
 //Endpoint to get all crypto news 
 app.get('/api/news-crypto', async (req, res) => {
   console.log('Received request for news crypto');
@@ -1535,6 +1876,7 @@ app.get('/api/scrape-tweets', async (req, res) => {
     const browser = await puppeteer.launch({ headless: false });
     //console.log('Browser launched.');
     const page = await browser.newPage();
+    page.setDefaultNavigationTimeout(60000);
     //console.log('New page created.');
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.3');
                             //Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
@@ -1545,14 +1887,14 @@ app.get('/api/scrape-tweets', async (req, res) => {
       //'https://xcancel.com/AdamMancini4',
       //'https://nitter.poast.org/AdamMancini4',
       'https://nitter.lucabased.xyz/AdamMancini4',
-      'https://nitter.lucabased.xyz/InvestorsLive',
-      'https://nitter.lucabased.xyz/RedDogT3',
+      //'https://nitter.lucabased.xyz/InvestorsLive',
+      // 'https://nitter.lucabased.xyz/RedDogT3',
     ];
 
     let allTweets = [];
     for (const url of profiles) {
       //console.log(`Navigating to ${url}`);
-      const response = await page.goto(url);
+      const response = await page.goto(url, { waitUntil: 'load', timeout: 60000 });
       const statusCode = response.status();
       //console.log(`HTTP Status Code for ${url}: ${statusCode}`);
 

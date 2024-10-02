@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     flex: 1,
-    backgroundColor: '#000000', // Set a background color or use your theme
+    backgroundColor: '#000000', 
     zIndex: 1000,
 
   },

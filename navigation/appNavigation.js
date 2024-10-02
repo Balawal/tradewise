@@ -15,6 +15,7 @@ import NewsDetailScreen from '../screens/social/news/NewsDetailScreen';
 import StockDetailScreen from '../screens/home/stocks/StockDetailScreen';
 import CryptoDetailScreen from '../screens/home/crypto/CryptoDetailScreen';
 import WatchListScreen from '../screens/watchlist/WatchListScreen';
+import CalculatorScreen from '../screens/calculator/CalculatorScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -65,6 +66,7 @@ export default function AppNavigation() {
             <Stack.Screen name="StockDetail" component={StockDetailScreen} options={{ headerShown: false }} />
             <Stack.Screen name="CryptoDetail" component={CryptoDetailScreen} options={{ headerShown: false }} />
             <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
+            <Stack.Screen name="Calculator" component={CalculatorScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
           ) : (
               // If user is not authenticated, show the Welcome/Login/SignUp screens
@@ -76,6 +78,7 @@ export default function AppNavigation() {
                   <Stack.Screen name="StockDetail" options={{ headerShown: false }} component={StockDetailScreen} />
                   <Stack.Screen name="CryptoDetail" options={{ headerShown: false }} component={CryptoDetailScreen} />
                   <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
+                  <Stack.Screen name="Calculator" options={{ headerShown: false }} component={CalculatorScreen} />
               </Stack.Navigator>
           )}
       </NavigationContainer>

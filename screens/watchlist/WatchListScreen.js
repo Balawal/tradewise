@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { collection, onSnapshot } from "firebase/firestore"; 
 import { db } from '../../config/firebase'; 
 import LastPrice from '../../components/stockdetails/lastPrice';
+import { useNavigation } from '@react-navigation/native';
 
 const WatchlistScreen = () => {
   const [favorites, setFavorites] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "watchList"), (snapshot) => {
@@ -19,7 +21,9 @@ const WatchlistScreen = () => {
   }, []);
 
   const renderFavoriteItem = ({ item }) => (
-    <View>
+    <TouchableOpacity onPress={() => {
+            console.log('Navigating to Calculator with:', item.symbol, item.name);
+            navigation.navigate('Calculator', { symbol: item.symbol, name: item.name })}}>
       <View style={styles.card}>
         <View style={styles.info}>
           <Text style={styles.symbol}>{item.symbol}</Text>
@@ -34,7 +38,7 @@ const WatchlistScreen = () => {
         )}
       </View>
       <View style={styles.separator} />
-    </View>
+      </TouchableOpacity>
   );
 
   return (
