@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
 	subHeader: {
 		fontSize: 14,
 		color: "grey",
-		marginBottom: 5,
+		marginBottom: 0,
 		marginLeft: 15,
 	},
 	bottomSheetBackground: {

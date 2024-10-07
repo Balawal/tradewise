@@ -19,7 +19,7 @@ export default function WelcomeScreen() {
                 <View className="space-y-4">
                     <TouchableOpacity
                     onPress={()=> navigation.navigate('SignUp')}
-                        className="py-3 bg-sky-700 mx-7 rounded-xl">
+                        className="py-3 bg-violet-950 mx-7 rounded-xl">
                             <Text 
                                 className="text-xl font-bold text-center text-slate-950"
                             >
@@ -29,7 +29,7 @@ export default function WelcomeScreen() {
                     <View className="flex-row justify-center">
                         <Text className="text-white font-semibold">Already have an account?</Text>
                         <TouchableOpacity onPress={()=> navigation.navigate('Login')}>
-                            <Text className="font-semibold text-sky-700"> Log In</Text>
+                            <Text className="font-semibold text-violet-950"> Log In</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

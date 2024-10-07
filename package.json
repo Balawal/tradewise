@@ -34,8 +34,10 @@
     "node-cron": "^3.0.3",
     "puppeteer": "^23.1.1",
     "react": "18.2.0",
+    "react-horizontal-stacked-bar-chart": "^8.15.2",
     "react-native": "0.74.5",
     "react-native-animated-numbers": "^0.6.2",
+    "react-native-calendar-events": "^2.2.0",
     "react-native-calendars": "^1.1307.0",
     "react-native-chart-kit": "^6.12.0",
     "react-native-elements": "^3.4.3",
@@ -52,7 +54,8 @@
     "react-native-vector-icons": "^10.1.0",
     "react-native-websocket": "^1.0.2",
     "react-native-webview": "13.8.6",
-    "twitter-api-v2": "^1.17.2"
+    "twitter-api-v2": "^1.17.2",
+    "expo-calendar": "~13.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

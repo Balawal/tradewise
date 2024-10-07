@@ -33,10 +33,6 @@ const SplashScreen = () => (
 export default function AppNavigation() {
     const [isReady, setIsReady] = useState(false);
     const { user } = useAuth();
-    // const { isConnected } = useStockWebSocket();
-    // const { isConnectedCrypto } = useCryptoWebSocket();
-    //const { isConnectedLatestTradeStocks } = useLatestTradeStocksWebSocket();
-    
 
     useEffect(() => {
       setTimeout(() => {
@@ -44,9 +40,6 @@ export default function AppNavigation() {
       }, 10000);
 
       return () => {
-        // closeStockWebSocket(); 
-        // closeCryptoWebSocket();
-        //closeLatestTradeStocksWebSocket();
       };
     }, []);
 

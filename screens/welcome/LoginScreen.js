@@ -91,7 +91,7 @@ export default function LoginScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={handleSubmit}
-                        className="py-3 bg-sky-700 rounded-xl"
+                        className="py-3 bg-violet-950 rounded-xl"
                     >
                         <Text className="font-xl font-bold text-center text-gray-700">
                             Login
@@ -118,7 +118,7 @@ export default function LoginScreen() {
                 <View className="flex-row justify-center mt-7">
                         <Text className="text-gray-500 font-semibold">Don't have an account?</Text>
                         <TouchableOpacity onPress={()=> navigation.navigate('SignUp')}>
-                            <Text className="font-semibold text-sky-700"> Sign Up</Text>
+                            <Text className="font-semibold text-violet-950"> Sign Up</Text>
                         </TouchableOpacity>
                     </View>
             </View>

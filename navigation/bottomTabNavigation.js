@@ -9,6 +9,7 @@ import NewsScreen from '../screens/social/news/NewsScreen';
 import SocialScreen from '../screens/social/SocialScreen';
 import SearchScreen from '../screens/SearchScreen';
 import WatchListScreen from '../screens/watchlist/WatchListScreen';
+import WatchListStackNavigator from './watchListCalculator';
 
 const Tab = createBottomTabNavigator();
 
@@ -46,7 +47,7 @@ const BottomTabNavigation = () => {
             })}
         >
             <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Cash" component={WatchListScreen}/>
+            <Tab.Screen name="Cash" component={WatchListStackNavigator}/>
             <Tab.Screen name="Notifications" component={SearchScreen} />
             <Tab.Screen name="Social" component={SocialScreen} />
             <Tab.Screen name="Settings" component={SettingsScreen} />

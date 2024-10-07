@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ChartCrypto from '../../../components/cryptodetails/chartCrypto';
 import WatchList from '../../../components/stockdetails/watchList';
+import EarningsCalendar from '../../../components/stockdetails/calendar';
 
 
 const CryptoDetailScreen = ({ route }) => {
@@ -126,7 +127,7 @@ const CryptoDetailScreen = ({ route }) => {
     }
   };
 
-
+  const earning = "2024-10-30";
 
   const renderHeader = () => (
     <View>
@@ -137,6 +138,7 @@ const CryptoDetailScreen = ({ route }) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back-ios" size="25" color={backButtonColor} />
             </TouchableOpacity>
+            <EarningsCalendar earningsDate={earning} />
             <WatchList symbol={(cryptoData.symbol).toUpperCase()} name={cryptoData.name} price={cryptoData.market_data.current_price.usd.toLocaleString()} type="crypto" color={backButtonColor}/>
           </View>
             <Text style={styles.name}>{cryptoData.name}</Text>
@@ -169,7 +171,7 @@ const CryptoDetailScreen = ({ route }) => {
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>SUPPLY</Text>
-                <Text style={styles.under}>{formatNum(cryptoData.market_data.circulating_supply) || "None"}</Text>
+                <Text style={styles.under}>{formatNum(cryptoData.market_data.circulating_supply.toFixed(2))|| "None"}</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>VOLUME</Text>
@@ -182,11 +184,11 @@ const CryptoDetailScreen = ({ route }) => {
             <View style={styles.row}>
               <View style={styles.leftColumn}>
                 <Text style={styles.descriptor}>POSITIVE</Text>
-                <Text style={styles.under}>{cryptoData.sentiment_votes_up_percentage || "None"}%</Text>
+                <Text style={styles.under}>{cryptoData.sentiment_votes_up_percentage || "0"}%</Text>
               </View>
               <View style={styles.centerColumn}>
                 <Text style={styles.descriptor}>NEGATIVE</Text>
-                <Text style={styles.under}>{cryptoData.sentiment_votes_down_percentage || "None"}%</Text>
+                <Text style={styles.under}>{cryptoData.sentiment_votes_down_percentage || "0"}%</Text>
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>X FOLLOWERS</Text>

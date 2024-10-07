@@ -7,6 +7,7 @@ import { LineChart } from 'react-native-chart-kit';
 import Chart from '../../../components/stockdetails/chart' 
 import LastPrice from '../../../components/stockdetails/lastPrice';
 import WatchList from '../../../components/stockdetails/watchList';
+import EarningsCalendar from '../../../components/stockdetails/calendar';
 
 
 const StockDetailScreen = ({ route, navigation }) => {
@@ -160,6 +161,7 @@ const StockDetailScreen = ({ route, navigation }) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back-ios" size="25" color={backButtonColor}  />
             </TouchableOpacity>
+            <EarningsCalendar earningsDate={earnings?.annualEarnings?.[0]?.fiscalDateEnding || "None"} />
             <WatchList symbol={stockSymbol} name={stockData.Name} price={price.trade.p} type="stock" color={backButtonColor} />
           </View>
             <Text style={styles.name}>{stockData.Name || "None"}</Text>

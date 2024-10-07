@@ -6,6 +6,8 @@
     <true/>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>Allow Tradewise to access your calendar</string>
     <key>CFBundleDisplayName</key>
     <string>tradewise</string>
     <key>CFBundleExecutable</key>
