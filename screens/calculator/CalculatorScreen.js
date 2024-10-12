@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Text,
   View,
@@ -9,10 +9,12 @@ import {
   Keyboard,
   Alert,
   FlatList,
+  ScrollView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from '../../components/calculator/datePicker';
 import BarChartComponent from '../../components/calculator/barChart';
+import { MaterialIndicator } from 'react-native-indicators';
 
 const CalculatorScreen = ({ route, navigation }) => {
   const { symbol } = route.params;
@@ -22,6 +24,11 @@ const CalculatorScreen = ({ route, navigation }) => {
   const [reinvestDividends, setReinvestDividends] = useState(false); // New state for reinvestment toggle
   const [reinvestmentAmount, setReinvestmentAmount] = useState(''); // Amount to reinvest
   const [periodicContribution, setPeriodicContribution] = useState(''); // Periodic contributions
+
+  const scrollViewRef = useRef(null);  // Reference for ScrollView
+  const barChartRef = useRef(null);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCalculate = async () => {
     if (!investmentAmount || !selectedDate) {
@@ -33,8 +40,17 @@ const CalculatorScreen = ({ route, navigation }) => {
   
     // If the user toggles reinvestment, change the URL to the reinvestment endpoint
     if (reinvestDividends && reinvestmentAmount && periodicContribution) {
-      url = `http://192.168.1.118:3000/api/stock-calculator-reinvest?symbols=${symbol}&start=${selectedDate}&investment=${investmentAmount}&contribution=${reinvestDividends}&frequency=${periodicContribution}`;
+      url = `http://192.168.1.118:3000/api/stock-calculator-reinvest?symbols=${symbol}&start=${selectedDate}&investment=${investmentAmount}&contribution=${reinvestmentAmount}&frequency=${periodicContribution}`;
     }
+
+    setIsLoading(true);
+
+    console.log(symbol);
+    console.log(selectedDate);
+    console.log(investmentAmount);
+    console.log(reinvestmentAmount);
+    console.log(periodicContribution);
+
   
     try {
       const response = await fetch(url);
@@ -43,12 +59,24 @@ const CalculatorScreen = ({ route, navigation }) => {
   
       if (response.ok) {
         setCalculationResult(data);  // Update the state to reflect the result
+
+        setTimeout(() => {
+          barChartRef.current?.measureLayout(
+            scrollViewRef.current,
+            (x, y) => {
+              scrollViewRef.current.scrollTo({ y: y - 50, animated: true, duration: 50000, });
+            },
+            (error) => console.error(error)
+          );
+        }, 200); 
       } else {
         Alert.alert('Error', data.message || 'Failed to fetch data from the server');
       }
     } catch (error) {
       console.error('Error fetching calculation:', error);
       Alert.alert('Error', 'An error occurred while calculating the investment.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -136,16 +164,23 @@ const CalculatorScreen = ({ route, navigation }) => {
 
       {/* Calculate Button */}
       <View style={styles.buttonContainer}>
+      {isLoading ? (
+          <MaterialIndicator color="white" />  
+        ) : (
         <TouchableOpacity style={styles.button} onPress={handleCalculate}>
           <Text style={styles.buttonText}>Calculate</Text>
         </TouchableOpacity>
+        )}
       </View>
 
       {/* Calculation Result */}
       {calculationResult && (
-        <View>
-            <BarChartComponent symbol={calculationResult.symbol} investment={investmentAmount} profit={calculationResult.totalProfit} />
-            <Text style={styles.profit}>Profit/Loss</Text>
+        <View ref={barChartRef}>
+            <BarChartComponent 
+      investment={parseFloat(investmentAmount)} 
+      profit={calculationResult.totalProfit} 
+    />
+            <Text style={styles.summary}>Investment Summary</Text>
           <View style={styles.row}>
             <View style={styles.leftColumn}>
               <Text style={styles.descriptor}>TICKER</Text>
@@ -169,7 +204,7 @@ const CalculatorScreen = ({ route, navigation }) => {
             <Text style={styles.under}>{calculationResult.dividends.totalDividend}</Text>
           </View>
           <View style={styles.centerColumn}>
-            <Text style={styles.descriptor}>TIMES DISTRIBUTED</Text>
+            <Text style={styles.descriptor}>TIMES DISTR.</Text>
             <Text style={styles.under}>{calculationResult.dividends.timesDistributed}</Text>
           </View>
           <View style={styles.rightColumn}>
@@ -212,10 +247,23 @@ const CalculatorScreen = ({ route, navigation }) => {
           </View>
         </View>
         <View style={styles.separator} />
-        {reinvestDividends && (
+        {reinvestDividends && reinvestmentAmount && periodicContribution && calculationResult.periodicContributions && (
         <View>
-          <Text style={styles.profit}>Total Reinvested: $</Text>
-          <Text style={styles.profit}>Final Investment Value: $</Text>
+          <Text style={styles.summary}>Dividend Summary</Text>
+          <View style={styles.row}>
+          <View style={styles.leftColumn}>
+            <Text style={styles.descriptor}>DRIP</Text>
+            <Text style={styles.under}>${parseFloat(calculationResult.dripValue).toFixed(2)}</Text>
+          </View>
+          <View style={styles.centerColumn}>
+            <Text style={styles.descriptor}>CONTR. SHARES</Text>
+            <Text style={styles.under}>${parseFloat(calculationResult.periodicContributions.totalContribution).toFixed(2)}</Text>
+          </View>
+          <View style={styles.rightColumn}>
+            <Text style={styles.descriptor}>TOTAL CONTR.</Text>
+            <Text style={styles.under}>{parseFloat(calculationResult.periodicContributions.contributionShares).toFixed(2)}</Text>
+          </View>
+        </View>
         </View>
         )}
       </View>
@@ -225,11 +273,9 @@ const CalculatorScreen = ({ route, navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <FlatList
-        style={styles.container}
-        data={[]}
-        ListHeaderComponent={renderHeader}
-      />
+      <ScrollView ref={scrollViewRef} style={styles.container}>
+        {renderHeader()}
+      </ScrollView>
     </TouchableWithoutFeedback>
   );
 };
@@ -252,6 +298,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingLeft: 16,
     paddingTop: 20,
+  },
+  summary: {
+    fontSize: 23,
+    marginVertical: 30,
+    marginTop: 40,
+    color: 'white',
+    fontWeight: 'bold',
+    padding: 2
   },
   inputContainer: {
     marginTop: 10,
@@ -277,7 +331,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     paddingHorizontal: 16,
     paddingTop: 20,
-    paddingBottom: 30,
+    paddingBottom: 60,
   },
   button: {
     backgroundColor: '#8019e6',
@@ -351,6 +405,41 @@ const styles = StyleSheet.create({
   },
   selectedButton: {
     backgroundColor: '#8019e6',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  leftColumn: {
+    flex: 1,
+    alignItems: 'flex-start',
+    padding: 2
+  },
+  centerColumn: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  rightColumn: {
+    flex: 1,
+    alignItems: 'flex-end',
+    padding: 2
+  },
+  descriptor: {
+    fontSize: 12,
+    color: 'gray',
+    marginBottom: 8,
+    marginTop: 8
+  },
+  under: {
+    fontSize: 13,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#111',
+    marginVertical: 10,
   },
 });
 

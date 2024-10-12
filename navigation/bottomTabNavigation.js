@@ -10,8 +10,23 @@ import SocialScreen from '../screens/social/SocialScreen';
 import SearchScreen from '../screens/SearchScreen';
 import WatchListScreen from '../screens/watchlist/WatchListScreen';
 import WatchListStackNavigator from './watchListCalculator';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import StockDetailScreen from '../screens/home/stocks/StockDetailScreen';
+import CryptoDetailScreen from '../screens/home/crypto/CryptoDetailScreen';
 
 const Tab = createBottomTabNavigator();
+const HomeStack = createNativeStackNavigator();
+
+// Stack Navigator for Home and Detail Screens
+const HomeStackNavigator = () => {
+    return (
+        <HomeStack.Navigator>
+            <HomeStack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+            <HomeStack.Screen name="StockDetail" component={StockDetailScreen} options={{ headerShown: false }} />
+            <HomeStack.Screen name="CryptoDetail" component={CryptoDetailScreen} options={{ headerShown: false }} />
+        </HomeStack.Navigator>
+    );
+};
 
 const BottomTabNavigation = () => {
     return (
@@ -46,7 +61,7 @@ const BottomTabNavigation = () => {
                 },
             })}
         >
-            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Home" component={HomeStackNavigator} />
             <Tab.Screen name="Cash" component={WatchListStackNavigator}/>
             <Tab.Screen name="Notifications" component={SearchScreen} />
             <Tab.Screen name="Social" component={SocialScreen} />

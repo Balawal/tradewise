@@ -38,6 +38,7 @@ const TwitterScreen = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const DEFAULT_AVATAR = 'https://pbs.twimg.com/profile_images/899127121670541312/ZVBuToeP_bigger.jpg';
     // Function to fetch the latest tweet file and its data
     const fetchTweets = async () => {
       try {
@@ -51,12 +52,13 @@ const TwitterScreen = () => {
         }
 
         const latestFileData = await latestFileResponse.json();
+        const filename = latestFileData.filename || 'backup_tweets.csv';
         if (!latestFileData.filename) {
           throw new Error('No filename found');
         }
 
         // Fetch the tweets from the latest file
-        const tweetsResponse = await fetch(`http://192.168.1.118:3000/api/get-tweets?filename=${latestFileData.filename}`);
+        const tweetsResponse = await fetch(`http://192.168.1.118:3000/api/get-tweets?filename=${filename}`);
         if (!tweetsResponse.ok) {
           throw new Error('Failed to fetch tweets');
         }
@@ -71,6 +73,9 @@ const TwitterScreen = () => {
           //console.log('profile picture: ', avatar);
           const fullname = tweet.fullname.trim();
           //console.log('user fullname: ', fullname);
+
+          console.log(avatar);
+          console.log(fullname);
           return {
             ...tweet,
             stats: parsedStats,
@@ -81,7 +86,32 @@ const TwitterScreen = () => {
 
         setTweets(parsedTweets);
       } catch (err) {
-        setError(err.message);
+        console.error(err);
+      // In case of any error, attempt to load the backup tweets
+      try {
+        const backupTweetsResponse = await fetch('http://192.168.1.118:3000/api/get-tweets?filename=backup_tweets.csv');
+        if (!backupTweetsResponse.ok) throw new Error('Failed to fetch backup tweets');
+
+        const backupTweetsData = await backupTweetsResponse.json();
+        const parsedBackupTweets = backupTweetsData.map(tweet => {
+          const parsedStats = parseTweetStats(tweet.stats);
+          const avatar = DEFAULT_AVATAR;
+          const fullname = tweet.fullname.trim();
+
+          console.log(avatar);
+          console.log(fullname);
+          return {
+            ...tweet,
+            stats: parsedStats,
+            avatar,
+            fullname
+          };
+        });
+        setTweets(parsedBackupTweets); // Set backup tweets on error
+      } catch (backupError) {
+        console.error('Failed to load backup tweets:', backupError.message);
+        setError(backupError.message); // Set error if even backup fails
+      }
       } finally {
         setLoading(false);
       }

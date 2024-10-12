@@ -1,69 +1,34 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const BarChartComponent = ({ symbol, investment, profit }) => {
-  const total = parseFloat(investment) + parseFloat(profit);
-  
-  // Define X-axis intervals
-  const intervals = [
-    0,
-    total * 0.25,
-    total * 0.5,
-    total * 0.75,
-    total
-  ];
+const BarChartComponent = ({ investment, profit }) => {
+  // Calculate percentages for the bars
+  const total = investment + profit;
 
-  const investmentPercentage = (parseFloat(investment) / total) * 100;
-  const profitPercentage = (parseFloat(profit) / total) * 100;
+  // Prevent division by zero
+  const investmentPercentage = total > 0 ? (investment / total) * 100 : 0;
+  const profitPercentage = total > 0 ? (profit / total) * 100 : 0;
+
+  console.log('Investment:', investmentPercentage);
+  console.log('Profit:', profitPercentage);
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Investment and Profit</Text>
+      <Text style={styles.amount}>${(investment + profit).toFixed(2)}</Text>
+      <Text style={styles.change}>{(((total - investment) / investment) * 100).toFixed(2)}%</Text>
       <View style={styles.chartContainer}>
-        {/* Y-Axis Symbol */}
-        <View style={styles.yAxis}>
-          <Text style={styles.yAxisLabel}>{symbol}</Text>
-        </View>
-        {/* Bar and X-Axis */}
-        <View style={styles.barWrapper}>
-          <View style={styles.barContainer}>
-            {/* Investment Bar */}
-            <View
-              style={[
-                styles.barSegment,
-                { width: `${investmentPercentage}%`, backgroundColor: '#808080' },
-              ]}
-            />
-            {/* Profit Bar */}
-            <View
-              style={[
-                styles.barSegment,
-                { width: `${profitPercentage}%`, backgroundColor: '#007AFF' },
-              ]}
-            />
-            {/* Total Label in the middle of the bar */}
-            <Text style={styles.totalText}>
-              Total = ${total.toFixed(2)}
-            </Text>
-          </View>
-          {/* X-Axis Intervals */}
-          <View style={styles.xAxis}>
-            {intervals.map((interval, index) => (
-              <Text key={index} style={styles.xAxisLabel}>
-                ${interval.toFixed(2)}
-              </Text>
-            ))}
+        <View style={styles.barContainer}>
+          <Text style={styles.label}>Investment</Text>
+          <View style={styles.bar}>
+            <View style={[styles.filledBar, { width: `${investmentPercentage}%` }]} />
           </View>
         </View>
-      </View>
-      {/* Legend with colored rectangles */}
-      <View style={styles.legendContainer}>
-        <View style={styles.legendItem}>
-          <Text style={styles.legendText}>Investment:</Text>
-          <View style={[styles.legendColorBox, { backgroundColor: '#808080' }]} />
-        </View>
-        <View style={styles.legendItem}>
-          <Text style={styles.legendText}>Profit:</Text>
-          <View style={[styles.legendColorBox, { backgroundColor: '#007AFF' }]} />
+        <View style={styles.barContainer}>
+          <Text style={styles.label}>Profit</Text>
+          <View style={styles.bar}>
+            <View style={[styles.filledBar, { width: `${profitPercentage}%` }]} />
+          </View>
         </View>
       </View>
     </View>
@@ -72,81 +37,61 @@ const BarChartComponent = ({ symbol, investment, profit }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
+    backgroundColor: '#000',
+    borderRadius: 20,
+    padding: 16,
+    marginVertical: 10,
+    borderColor: '#4d3465',
+    borderWidth: 1,
+    height: 300
   },
-  label: {
+  title: {
+    color: 'white',
     fontSize: 16,
-    marginBottom: 10,
-    textAlign: 'center',
-    color: '#fff',  // Make the label white
+    fontWeight: '500',
+  },
+  amount: {
+    color: 'white',
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginVertical: 8,
+  },
+  change: {
+    color: '#0bda73',
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 16,
   },
   chartContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  yAxis: {
-    justifyContent: 'center',
-    marginRight: -1,
-  },
-  yAxisLabel: {
-    marginBottom: 15,
-    fontSize: 14,
-    textAlign: 'center',
-    color: '#fff',  // Make Y-axis label (symbol) white
-  },
-  barWrapper: {
-    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
   },
   barContainer: {
+    marginHorizontal: 4,
+    marginVertical: 10,
     flexDirection: 'row',
-    height: 50,
-    width: '100%',
-    backgroundColor: '#eee',
-    borderRadius: 5,
-    overflow: 'hidden',
-    position: 'relative', // Allows the overlaying of text
   },
-  barSegment: {
-    height: '100%',
-  },
-  totalText: {
-    position: 'absolute',
-    width: '100%',
-    textAlign: 'center',
-    top: '50%',
-    transform: [{ translateY: -10 }], // Centers the text vertically
-    color: '#000',  // White text
+  label: {
+    color: '#ad93c8',
+    fontSize: 11,
     fontWeight: 'bold',
-    fontSize: 14,
-  },
-  xAxis: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 5,
-  },
-  xAxisLabel: {
-    fontSize: 12,
     textAlign: 'center',
-    color: '#fff',  // Make X-axis intervals white
+    marginBottom: 50,
   },
-  legendContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+  bar: {
+    flex: 1,
+    backgroundColor: '#000',
+    overflow: 'hidden',
+    marginTop: -4,
+    marginLeft: 75,
+    width: 300,
+    position: 'absolute',
   },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  legendText: {
-    fontSize: 14,
-    color: '#fff',  // Make the legend text white
-  },
-  legendColorBox: {
-    width: 40,
-    height: 10,
-    marginLeft: 5,
-    borderRadius: 2,  // Optional: round the corners of the color boxes
+  filledBar: {
+    height: 60,
+    backgroundColor: '#ad93c8',
   },
 });
 

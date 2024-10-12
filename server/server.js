@@ -1884,9 +1884,9 @@ app.get('/api/scrape-tweets', async (req, res) => {
 
     const profiles = [
       //'https://nitter.privacydev.net/AdamMancini4',
-      //'https://xcancel.com/AdamMancini4',
+      'https://xcancel.com/AdamMancini4',
       //'https://nitter.poast.org/AdamMancini4',
-      'https://nitter.lucabased.xyz/AdamMancini4',
+      //'https://nitter.lucabased.xyz/AdamMancini4',
       //'https://nitter.lucabased.xyz/InvestorsLive',
       // 'https://nitter.lucabased.xyz/RedDogT3',
     ];
@@ -1954,7 +1954,7 @@ app.get('/api/scrape-tweets', async (req, res) => {
 // Endpoint to get scraped tweets
 app.get('/api/get-tweets', async (req, res) => {
   try {
-    const filename = req.query.filename;
+    const filename = req.query.filename || 'backup_tweets.csv';
     const filePath = path.join(tweetFilesDirectory, filename);
 
     if (!filename || !fs.existsSync(filePath)) {

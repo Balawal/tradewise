@@ -13,14 +13,14 @@ const SocialScreen = ({ navigation }) => {
     <NavigationContainer independent={true}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarActiveTintColor: '#1DA1F2',
+          tabBarActiveTintColor: '#4d3465',
           tabBarInactiveTintColor: '#888',
           tabBarStyle: { 
             backgroundColor: '#000',
             paddingTop: 32,  // Adjust this value to move the tabs lower
             height: 80,  // Adjust height as necessary
           },
-          tabBarIndicatorStyle: { backgroundColor: '#1DA1F2' },
+          tabBarIndicatorStyle: { backgroundColor: '#4d3465' },
           tabBarIcon: ({ color }) => {
             let iconName;
 

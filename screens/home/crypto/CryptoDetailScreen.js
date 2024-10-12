@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Image, FlatList, Linking } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Image, FlatList, Linking, } from 'react-native';
 import { MaterialIndicator } from 'react-native-indicators';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -138,7 +138,7 @@ const CryptoDetailScreen = ({ route }) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back-ios" size="25" color={backButtonColor} />
             </TouchableOpacity>
-            <EarningsCalendar earningsDate={earning} />
+            {/* <EarningsCalendar earningsDate={earning} /> */}
             <WatchList symbol={(cryptoData.symbol).toUpperCase()} name={cryptoData.name} price={cryptoData.market_data.current_price.usd.toLocaleString()} type="crypto" color={backButtonColor}/>
           </View>
             <Text style={styles.name}>{cryptoData.name}</Text>
