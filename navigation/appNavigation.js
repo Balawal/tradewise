@@ -45,9 +45,9 @@ export default function AppNavigation() {
       };
     }, []);
 
-    if (!isReady) {
-        return <SplashScreen />;
-    }
+    // if (!isReady) {
+    //     return <SplashScreen />;
+    // }
     
     return (
       <NavigationContainer>

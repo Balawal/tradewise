@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Dimensions, Text, StyleSheet, TouchableOpacity, PanResponder, Animated } from 'react-native';
 import axios from 'axios';
+import { MotiView } from 'moti';
+
 import { subscribeToStockUpdates, unsubscribeFromStockUpdates, useStockWebSocket } from '../websocket/WebSocketManager';
 import { doc, setDoc } from "firebase/firestore"; 
 import { db } from '../../config/firebase'; 
@@ -68,7 +70,14 @@ const LastPrice = ({ stockSymbol, containerStyle, textStyle }) => {
 
   return (
     <View style={[styles, containerStyle]}>
+      <MotiView
+        from={{ translateY: -10, opacity: 0 }} // Starting position and opacity
+        animate={{ translateY: 0, opacity: 1 }} // End position and opacity
+        transition={{ type: 'timing', duration: 300 }} // Animation duration
+        key={formattedPrice} // Ensure the component re-renders on price change
+      >
       <Text style={[styles, textStyle]}>${formattedPrice}</Text>
+      </MotiView>
     </View>
   );
 };

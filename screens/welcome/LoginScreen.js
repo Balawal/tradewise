@@ -27,7 +27,9 @@ export default function LoginScreen() {
                 await signInWithEmailAndPassword(auth, email, password);
                 setLoading(false);
             }catch(err){
-                Alert.alert('Error', err.message);
+                if (err.code === 'auth/invalid-credential') {
+                    Alert.alert('Error', 'The email address and/or password are incorrect.');
+                }
                 setLoading(false);
                 return;
             }

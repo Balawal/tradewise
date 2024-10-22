@@ -9,7 +9,7 @@ export default function WelcomeScreen() {
     <SafeAreaView className="flex-1 bg-black">
       <View className="flex-1 flex justify-around my-4">
         <Text className="text-white font-bold text-3xl text-center">
-          Welcome
+          Tradewise
         </Text>
         <View className="flex-row justify-center">
           <Image

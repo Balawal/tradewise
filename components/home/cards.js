@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useNavigation } from '@react-navigation/native';
+import { MotiView } from 'moti';
+import { Easing } from 'react-native-reanimated';
 
 const formatNum = (num) => {
   if (num >= 1e12) {
@@ -15,29 +17,35 @@ const formatNum = (num) => {
   }
 };
 
-const shuffleArray = (array) => {
-  let currentIndex = array.length, randomIndex;
-
-  // While there remain elements to shuffle
-  while (currentIndex !== 0) {
-    // Pick a remaining element
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // Swap it with the current element
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-  }
-
-  return array;
-};
-
-
 
 export const StockCards = ({ stocks, barData, displayVolume }) => {
+  const CARD_WIDTH = 150;  // Adjust this to the actual width of each card
+  const SCREEN_WIDTH = Dimensions.get('window').width;
+  const totalWidth = CARD_WIDTH * stocks.length;  // Total width of all cards
+  const animationDistance = totalWidth - SCREEN_WIDTH; 
+  const [translateX, setTranslateX] = useState(0);
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTranslateX((prev) => (prev <= -animationDistance ? 0 : prev - 2));  // Reset when reaches the end
+    }, 16);  // Adjust the interval as needed for smoothness
+
+    return () => clearInterval(interval);
+  }, [animationDistance]);
     
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cardsWrapper}>
+    <MotiView
+      from={{ translateX: 0 }}
+      animate={{ translateX }}
+      transition={{
+        type: 'timing',
+        duration: 10000,  // Make the duration short since you handle the looping manually
+        easing: Easing.linear,
+      }}
+    >
+    <View style={{ flexDirection: 'row' }}>
       {stocks.map(stock => (
         <TouchableOpacity
           key={stock.symbol}
@@ -93,15 +101,39 @@ export const StockCards = ({ stocks, barData, displayVolume }) => {
         </View>
         </TouchableOpacity>
       ))}
-    </ScrollView>
+    </View>
+    </MotiView>
   );
 };
   
 export const CryptoCards = ({ cryptos, barDataCrypto }) => {
+  const CARD_WIDTH = 150;  // Adjust this to the actual width of each card
+  const SCREEN_WIDTH = Dimensions.get('window').width;
+  const totalWidth = CARD_WIDTH * cryptos.length;  // Total width of all cards
+  const animationDistance = totalWidth - SCREEN_WIDTH; 
+  const [translateX, setTranslateX] = useState(0);
+  
   const navigation = useNavigation();
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTranslateX((prev) => (prev <= -animationDistance ? 0 : prev - 2));  // Reset when reaches the end
+    }, 16);  // Adjust the interval as needed for smoothness
+
+    return () => clearInterval(interval);
+  }, [animationDistance]);
+
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cardsWrapper}>
+    <MotiView
+      from={{ translateX: 0 }}
+      animate={{ translateX }}
+      transition={{
+        type: 'timing',
+        duration: 1000,  // Make the duration short since you handle the looping manually
+        easing: Easing.linear,
+      }}
+    >
+    <View style={{ flexDirection: 'row' }}>
     {cryptos.map(crypto => (
       <TouchableOpacity
       key={crypto.symbol}
@@ -158,7 +190,8 @@ export const CryptoCards = ({ cryptos, barDataCrypto }) => {
       </View>
       </TouchableOpacity>
     ))}
-  </ScrollView>
+    </View>
+  </MotiView>
   );
     
   };
