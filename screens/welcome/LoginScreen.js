@@ -1,10 +1,11 @@
-import {View, Text, Image, TouchableOpacity, TextInput} from 'react-native';
+import {View, Text, Image, TouchableOpacity, TextInput, Alert} from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../config/firebase';
+import { MaterialIndicator } from 'react-native-indicators';
 //import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
 
 // GoogleSignin.configure({
@@ -16,15 +17,46 @@ export default function LoginScreen() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const handleSubmit = async ()=> {
+    const [loading, setLoading] = useState(false);
+    
+    const handleSubmit = async () => {
+        setLoading(true);
+
         if(email && password){
             try{
                 await signInWithEmailAndPassword(auth, email, password);
+                setLoading(false);
             }catch(err){
-                console.log('got error: ', err.message);
+                Alert.alert('Error', err.message);
+                setLoading(false);
+                return;
             }
+        } else {
+            Alert.alert('Error', 'Please enter your email and password.');
+            setLoading(false);
         }
     }
+
+    const handleForgotPassword = async () => {
+        // Prompt the user for their email address
+        Alert.prompt(
+            'Reset Password',
+            'Please enter your email address:',
+            async (inputEmail) => {
+                if (inputEmail) {
+                    try {
+                        await sendPasswordResetEmail(auth, inputEmail);
+                        Alert.alert('Password Reset Email Sent', 'Please check your email for further instructions.');
+                    } catch (error) {
+                        Alert.alert('Error', error.message);
+                    }
+                }
+            },
+            'plain-text',
+            '',
+            'email'
+        );
+    };
 
     // const signIn = async () => {
     //     try {
@@ -52,7 +84,7 @@ export default function LoginScreen() {
     // };
 
     return(
-        <View className="flex-1 bg-slate-950">
+        <View className="flex-1 bg-black">
             <SafeAreaView className="flex">
                 <View className="flex-row justify-start">
                 <TouchableOpacity
@@ -63,8 +95,8 @@ export default function LoginScreen() {
                     </TouchableOpacity>
                 </View>
                 <View className="flex-row justify-center">
-                    <Image source={require('../../assets/icons/reading.png')}
-                        style={{width: 200, height: 200}} />
+                    <Image source={require('../../assets/icons/fix_logo.png')}
+                        style={{width: 120, height: 120}} />
                 </View>
             </SafeAreaView>
             <View className="flex-1 bg-white px-8 pt-8"
@@ -86,16 +118,32 @@ export default function LoginScreen() {
                         onChangeText={value=> setPassword(value)}
                         placeholder="Enter Password"
                     />
-                    <TouchableOpacity className="flex items-end mb-5">
+                    <TouchableOpacity 
+                        onPress={handleForgotPassword} 
+                        className="flex items-end mb-5"
+                    >
                         <Text className="text-gray-700">Forgot Password?</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={handleSubmit}
-                        className="py-3 bg-violet-950 rounded-xl"
+                    <TouchableOpacity 
+                        onPress={handleSubmit} 
+                        style={[ 
+                            { 
+                                backgroundColor: '#ad93c8', 
+                                borderRadius: 20, 
+                                paddingVertical: 8, 
+                                alignItems: 'center', 
+                                borderWidth: 2, 
+                                borderColor: '#ad93c8', 
+                            }, 
+                            loading && { borderWidth: 0, backgroundColor: 'white' } // Adjust the button style when loading
+                        ]} 
+                        disabled={loading}
                     >
-                        <Text className="font-xl font-bold text-center text-gray-700">
-                            Login
-                        </Text>
+                        {loading ? (
+                            <MaterialIndicator color="black" />
+                        ) : (
+                            <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>Login</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
                 <Text className="text-xl text-gray-700 font-bold text-center py-5">
@@ -115,10 +163,10 @@ export default function LoginScreen() {
                             className="w-10 h-10" />
                     </TouchableOpacity>
                 </View>
-                <View className="flex-row justify-center mt-7">
+                <View className="flex-row justify-center mt-14">
                         <Text className="text-gray-500 font-semibold">Don't have an account?</Text>
                         <TouchableOpacity onPress={()=> navigation.navigate('SignUp')}>
-                            <Text className="font-semibold text-violet-950"> Sign Up</Text>
+                            <Text className="font-semibold text-[#ad93c8]"> Sign Up</Text>
                         </TouchableOpacity>
                     </View>
             </View>

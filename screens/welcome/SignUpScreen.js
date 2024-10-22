@@ -1,10 +1,13 @@
-import {View, Text, Image, TouchableOpacity, TextInput} from 'react-native';
+import {View, Text, Image, TouchableOpacity, TextInput, Alert} from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '../../config/firebase';
+import { db } from '../../config/firebase'; // Import Firestore
+import { doc, setDoc } from 'firebase/firestore'; 
+import { MaterialIndicator } from 'react-native-indicators';
 //import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
 
 // GoogleSignin.configure({
@@ -17,13 +20,46 @@ export default function SignUpScreen() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const handleSubmit = async ()=> {
-        if(email && password){
-            try{
-                await createUserWithEmailAndPassword(auth, email, password);
-            }catch(err){
-                console.log('got error: ', err.message);
-            }
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async () => {
+        setLoading(true);
+
+        if (password.length < 6) {
+            Alert.alert('Error', 'Password must be at least 6 characters long.');
+            setLoading(false);  
+            return;
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(email)) {
+            Alert.alert('Error', 'Please enter a valid email address.');
+            setLoading(false);
+            return;
+        }
+
+        if (email && password && name) { // Ensure the name is also checked
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                setLoading(false);
+    
+                // Store username in Firestore
+                await setDoc(doc(db, 'users', user.uid), {
+                    username: name, // Store the username
+                    email: user.email // Store the email (optional)
+                });
+    
+                // Navigate to the next screen if needed
+            } catch (err) {
+                Alert.alert('Error', err.message);
+                setLoading(false);
+                return;
+            } 
+        } else {
+            Alert.alert('Error', 'Please fill in all the fields.');
+            setLoading(false);
         }
     }
 
@@ -53,7 +89,7 @@ export default function SignUpScreen() {
     // };
     
     return(
-        <View className="flex-1 bg-slate-950">
+        <View className="flex-1 bg-black">
             <SafeAreaView className="flex">
                 <View className="flex-row justify-start">
                     <TouchableOpacity
@@ -64,8 +100,8 @@ export default function SignUpScreen() {
                     </TouchableOpacity>
                 </View>
                 <View className="flex-row justify-center">
-                    <Image source={require('../../assets/icons/reading.png')}
-                        style={{width: 165, height: 110}} />
+                    <Image source={require('../../assets/icons/fix_logo.png')}
+                        style={{width: 100, height: 100}} />
                 </View>
             </SafeAreaView>
             <View className="flex-1 bg-white px-8 pt-8"
@@ -94,13 +130,26 @@ export default function SignUpScreen() {
                         onChangeText={value=> setPassword(value)}
                         placeholder="Enter Password"
                     />
-                    <TouchableOpacity
-                        className="py-3 bg-violet-950 rounded-xl"
-                        onPress={handleSubmit}
+                   <TouchableOpacity 
+                        onPress={handleSubmit} 
+                        style={[ 
+                            { 
+                                backgroundColor: '#ad93c8', 
+                                borderRadius: 20, 
+                                paddingVertical: 8, 
+                                alignItems: 'center', 
+                                borderWidth: 2, 
+                                borderColor: '#ad93c8', 
+                            }, 
+                            loading && { borderWidth: 0, backgroundColor: 'white' } // Adjust the button style when loading
+                        ]} 
+                        disabled={loading}
                     >
-                        <Text className="font-xl font-bold text-center text-gray-700">
-                            Sign Up
-                        </Text>
+                        {loading ? (
+                            <MaterialIndicator color="black" />
+                        ) : (
+                            <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>Signup</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
                 <Text className="text-xl text-gray-700 font-bold text-center py-5">
@@ -124,10 +173,10 @@ export default function SignUpScreen() {
                     </TouchableOpacity>
                 
                 </View>
-                <View className="flex-row justify-center mt-7">
+                <View className="flex-row justify-center mt-14">
                         <Text className="text-gray-500 font-semibold">Already have an account?</Text>
                         <TouchableOpacity onPress={()=> navigation.navigate('Login')}>
-                            <Text className="font-semibold text-violet-950"> Login</Text>
+                            <Text className="font-semibold text-[#ad93c8]"> Login</Text>
                         </TouchableOpacity>
                     </View>
             </View>

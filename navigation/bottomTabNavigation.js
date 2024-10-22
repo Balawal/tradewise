@@ -13,6 +13,7 @@ import WatchListStackNavigator from './watchListCalculator';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import StockDetailScreen from '../screens/home/stocks/StockDetailScreen';
 import CryptoDetailScreen from '../screens/home/crypto/CryptoDetailScreen';
+import SettingsStackNavigator from './settingsNavigation';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -50,9 +51,9 @@ const BottomTabNavigation = () => {
                     } else if (route.name === 'Cash') {
                         iconName = 'wallet';
                         return <FontAwesome5 name={iconName} size={24} color={color} />;
-                    } else if (route.name === 'Notifications') {
-                        iconName = 'bell';
-                        return <FontAwesome5 name={iconName} size={24} color={color} />;
+                    // } else if (route.name === 'Notifications') {
+                    //     iconName = 'bell';
+                    //     return <FontAwesome5 name={iconName} size={24} color={color} />;
                     } else if (route.name === 'Social') {
                         return <Ionicons name="chatbox-ellipses-sharp" size={24} color={color} />;
                     } else if (route.name === 'Settings') {
@@ -63,9 +64,9 @@ const BottomTabNavigation = () => {
         >
             <Tab.Screen name="Home" component={HomeStackNavigator} />
             <Tab.Screen name="Cash" component={WatchListStackNavigator}/>
-            <Tab.Screen name="Notifications" component={SearchScreen} />
+            {/* <Tab.Screen name="Notifications" component={SearchScreen} /> */}
             <Tab.Screen name="Social" component={SocialScreen} />
-            <Tab.Screen name="Settings" component={SettingsScreen} />
+            <Tab.Screen name="Settings" component={SettingsStackNavigator} />
         </Tab.Navigator>
     );
 };

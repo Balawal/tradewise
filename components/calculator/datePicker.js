@@ -33,7 +33,7 @@ const DatePicker = ({ onDateChange, selectedDate }) => {
             style={styles.input}
             value={selectedDate} // Use selectedDate passed from parent
             placeholder="YYYY-MM-DD"
-            placeholderTextColor="#ad93c8"  // Matches the investment amount placeholder
+            placeholderTextColor="#e5d4d4"  // Matches the investment amount placeholder
             editable={false}  // Make it read-only
           />
         </View>
@@ -56,14 +56,15 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   input: {
-    backgroundColor: '#362447',  // Matches investment amount background color
+    backgroundColor: '#312c35',  // Matches investment amount background color
+    borderColor: '#302938',  
     color: 'white',  // Matches the text color
     borderRadius: 10,  // Same border radius
     height: 56,  // Same height
     paddingHorizontal: 16,  // Matches padding
     fontSize: 16,  // Same font size
     borderWidth: 0,  // No border
-    placeholderTextColor: '#ad93c8',  // Matches placeholder color
+    placeholderTextColor: '#fff',  // Matches placeholder color
   },
 });
 

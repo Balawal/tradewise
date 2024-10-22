@@ -16,6 +16,8 @@ import StockDetailScreen from '../screens/home/stocks/StockDetailScreen';
 import CryptoDetailScreen from '../screens/home/crypto/CryptoDetailScreen';
 import WatchListScreen from '../screens/watchlist/WatchListScreen';
 import CalculatorScreen from '../screens/calculator/CalculatorScreen';
+import DeleteAccountScreen from '../screens/settings/DeleteAccountScreen';
+import ChangePasswordScreen from '../screens/settings/ChangePasswordScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,12 +45,10 @@ export default function AppNavigation() {
       };
     }, []);
 
-    /*
     if (!isReady) {
         return <SplashScreen />;
     }
-    */
-
+    
     return (
       <NavigationContainer>
           {user ? (
@@ -60,6 +60,8 @@ export default function AppNavigation() {
             <Stack.Screen name="CryptoDetail" component={CryptoDetailScreen} options={{ headerShown: false }} />
             <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
             <Stack.Screen name="Calculator" component={CalculatorScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
           ) : (
               // If user is not authenticated, show the Welcome/Login/SignUp screens
@@ -72,6 +74,8 @@ export default function AppNavigation() {
                   <Stack.Screen name="CryptoDetail" options={{ headerShown: false }} component={CryptoDetailScreen} />
                   <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
                   <Stack.Screen name="Calculator" options={{ headerShown: false }} component={CalculatorScreen} />
+                  <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: false }} />
+                  <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: false }} />
               </Stack.Navigator>
           )}
       </NavigationContainer>
@@ -83,7 +87,7 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#f5bc42',
+      backgroundColor: '#ad93c8',
     },
     animation: {
       width: 150,

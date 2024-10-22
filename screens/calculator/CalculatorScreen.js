@@ -98,7 +98,7 @@ const CalculatorScreen = ({ route, navigation }) => {
           value={investmentAmount}
           onChangeText={setInvestmentAmount}
           placeholder="$0.00"
-          placeholderTextColor="#ad93c8"
+          placeholderTextColor="#e5d4d4"
           keyboardType="numeric"
         />
       </View>
@@ -130,7 +130,7 @@ const CalculatorScreen = ({ route, navigation }) => {
             value={reinvestmentAmount}
             onChangeText={setReinvestmentAmount}
             placeholder="$0.00"
-            placeholderTextColor="#ad93c8"
+            placeholderTextColor="#e5d4d4"
             keyboardType="numeric"
           />
         </View>
@@ -319,14 +319,15 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   input: {
-    backgroundColor: '#362447',
+    backgroundColor: '#312c35',
+    borderColor: '#302938',
     color: 'white',
     borderRadius: 10,
     height: 56,
     paddingHorizontal: 16,
     fontSize: 16,
     borderWidth: 0,
-    placeholderTextColor: '#ad93c8',
+    placeholderTextColor: '#fff',
   },
   buttonContainer: {
     paddingHorizontal: 16,
@@ -334,15 +335,16 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
   button: {
-    backgroundColor: '#8019e6',
-    borderRadius: 10,
-    height: 48,
-    justifyContent: 'center',
+    backgroundColor: '#000',  // Set background to black
+    borderRadius: 20,
+    paddingVertical: 8,
     alignItems: 'center',
+    borderWidth: 2,  // Add a border
+    borderColor: '#ad93c8', 
   },
   buttonText: {
-    color: 'white',
-    fontSize: 16,
+    color: '#ad93c8',  // Change the text color to match the border
+    fontSize: 14,
     fontWeight: 'bold',
   },
   profit: {
