@@ -9,13 +9,20 @@ const BarChartComponent = ({ investment, profit }) => {
   const investmentPercentage = total > 0 ? (investment / total) * 100 : 0;
   const profitPercentage = total > 0 ? (profit / total) * 100 : 0;
 
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(num);
+  };
+
   console.log('Investment:', investmentPercentage);
   console.log('Profit:', profitPercentage);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Investment and Profit</Text>
-      <Text style={styles.amount}>${(investment + profit).toFixed(2)}</Text>
+      <Text style={styles.amount}>${formatNumber(investment + profit)}</Text>
       <Text style={styles.change}>{(((total - investment) / investment) * 100).toFixed(2)}%</Text>
       <View style={styles.chartContainer}>
         <View style={styles.barContainer}>

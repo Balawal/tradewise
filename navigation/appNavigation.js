@@ -24,7 +24,7 @@ const Stack = createNativeStackNavigator();
 const SplashScreen = () => (
     <View style={styles.container}>
       <LottieView 
-        source={require('../assets/icons/lottie-splash-animation.json')}
+        source={require('../assets/icons/charging_bull.json')}
         autoPlay
         loop
         style={styles.animation}
@@ -45,9 +45,9 @@ export default function AppNavigation() {
       };
     }, []);
 
-    // if (!isReady) {
-    //     return <SplashScreen />;
-    // }
+    if (!isReady) {
+        return <SplashScreen />;
+    }
     
     return (
       <NavigationContainer>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#ad93c8',
     },
     animation: {
-      width: 150,
-      height: 150,
+      width: 250,
+      height: 250,
     },
   });

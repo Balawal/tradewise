@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { collection, onSnapshot } from "firebase/firestore"; 
 import { db } from '../../config/firebase'; 
 import LastPrice from '../../components/stockdetails/lastPrice';
 import { useNavigation } from '@react-navigation/native';
+import { getAuth } from 'firebase/auth';
 
 const WatchlistScreen = () => {
   const [favorites, setFavorites] = useState([]);
   const navigation = useNavigation();
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "watchList"), (snapshot) => {
+    if (!user) return;
+
+    const unsubscribe = onSnapshot(collection(db, `users/${user.uid}/watchList`), (snapshot) => {
       const updatedFavorites = snapshot.docs.map(doc => doc.data());
       setFavorites(updatedFavorites);
       console.log("Real-time watchlist data::: ", updatedFavorites);
@@ -18,38 +23,49 @@ const WatchlistScreen = () => {
 
     // Cleanup listener on unmount
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
-  const renderFavoriteItem = ({ item }) => (
-    <TouchableOpacity onPress={() => {
-            console.log('Navigating to Calculator with:', item.symbol, item.name);
-            navigation.navigate('Calculator', { symbol: item.symbol, name: item.name })}}>
-      <View style={styles.card}>
-        <View style={styles.info}>
-          <Text style={styles.symbol}>{item.symbol}</Text>
-          <Text style={styles.name}>{item.name}</Text>
+  const renderFavoriteItem = ({ item }) => {
+
+    const shortName = item.name.length > 25 ? `${item.name.slice(0, 25)}...` : item.name;
+
+    return(
+      <TouchableOpacity onPress={() => {
+        console.log('Navigating to Calculator with:', item.symbol, item.name);
+        navigation.navigate('Calculator', { symbol: item.symbol, name: item.name })}}>
+        <View style={styles.card}>
+          <View style={styles.info}>
+            <Text style={styles.symbol}>{item.symbol}</Text>
+            <Text style={styles.name}>{shortName}</Text>
+          </View>
+          {item.type === 'stock' ? (
+            // Render the LastPrice component for stocks
+            <LastPrice stockSymbol={item.symbol} containerStyle={styles.priceContainer} textStyle={styles.price}/>
+          ) : (
+            // Render static price for crypto
+            <Text style={styles.price}>${parseFloat(item.price).toFixed(2)}</Text>
+          )}
         </View>
-        {item.type === 'stock' ? (
-          // Render the LastPrice component for stocks
-          <LastPrice stockSymbol={item.symbol} containerStyle={styles.priceContainer} textStyle={styles.price}/>
-        ) : (
-          // Render static price for crypto
-          <Text style={styles.price}>${parseFloat(item.price).toFixed(2)}</Text>
-        )}
-      </View>
-      <View style={styles.separator} />
+        <View style={styles.separator} />
       </TouchableOpacity>
+    );
+  };
+
+  const renderEmptyMessage = () => (
+    <View style={styles.emptyMessageContainer}>
+      <Text style={styles.emptyMessage}>Explore stocks and crypto to create your own personalized watchlist!</Text>
+    </View>
   );
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Watchlist</Text>
       <FlatList
         data={favorites}
         keyExtractor={(item) => item.symbol}
         renderItem={renderFavoriteItem}
-        ListHeaderComponent={() => (
-          <Text style={styles.header}>Watchlist</Text>
-        )}
+        ListEmptyComponent={renderEmptyMessage}
+        contentContainerStyle={favorites.length === 0 ? styles.emptyListContainer : styles.listContainer}
       />
     </View>
   );
@@ -75,6 +91,24 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         marginLeft: 15
       },
+      emptyListContainer: {
+        flexGrow: 1, // Allows the container to expand and center content
+        justifyContent: 'center', // Centers the empty message vertically
+        alignItems: 'center', // Centers the empty message horizontally
+    },
+    listContainer: {
+        paddingBottom: 50, // Add some padding to the bottom of the list
+    },
+    emptyMessageContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+    },
+    emptyMessage: {
+        color: '#ab9db8',
+        fontSize: 15,
+        textAlign: 'center',
+    },
       card: {
         flexDirection: 'row', // Align items in a row
         justifyContent: 'space-between', // Push price to the other end

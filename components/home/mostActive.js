@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { StockCards } from "./cards";
+import { StockCards, CryptoCards } from "./cards";
 
 const MostActive = () => {
 	const [mostActive, setMostActive] = useState([]);
-	const [mostActiveCrypto, setMostActiveCrypto] = useState({});
 	const [mostActiveBarData, setMostActiveBarData] = useState({});
+	const [mostActiveCrypto, setMostActiveCrypto] = useState([]);
 	const [mostActiveBarDataCrypto, setMostActiveBarDataCrypto] = useState({});
 
 	useEffect(() => {
@@ -44,7 +44,46 @@ const MostActive = () => {
 				console.error("Error fetching most active data:", error);
 			}
 		};
+
+		const fetchMostActiveCrypto = async () => {
+			try {
+				console.log("fetching most active crypto");
+				const responseCrypto = await fetch(`http://192.168.1.118:3000/api/top-coins`);
+				if (!responseCrypto.ok) throw new Error(`HTTP error! status: ${response.status}`);
+				const dataCrypto = await responseCrypto.json();
+
+				if (!Array.isArray(dataCrypto)) throw new Error("Invalid response format");
+
+				const symbolsCrypto = dataCrypto.map((item) => item.symbol);
+
+				// Construct comma-separated symbols string
+				const symbolsStringCrypto = symbolsCrypto.join(",");
+
+				console.log("fetching historical bars");
+				const barsResponseCrypto = await fetch(`http://192.168.1.118:3000/api/historical-bars-crypto?symbols=${symbolsStringCrypto}`);
+				if (!barsResponseCrypto.ok) throw new Error(`HTTP error! status: ${barsResponseCrypto.status}`);
+				const barsDataCrypto = await barsResponseCrypto.json();
+
+				const barDataMapCrypto = {};
+				for (const symbol in barsDataCrypto.bars) {
+					barDataMapCrypto[symbol] = barsDataCrypto.bars[symbol].map((bar) => bar.c); // Only closing price
+				}
+
+				const formattedMostActiveCrypto = dataCrypto.map((crypto) => ({
+					...crypto,
+					isGainer: crypto.percent_change > 0, // If positive, it's a gainer
+				}));
+
+				setMostActiveCrypto(formattedMostActiveCrypto);
+				setMostActiveBarDataCrypto(barDataMapCrypto);
+			} catch (error) {
+				console.error("Error fetching most active crypto data:", error);
+			}
+		};
 		fetchMostActive();
+		fetchMostActiveCrypto();
+
+		return () => {};
 	}, []);
 
 	return (
@@ -54,6 +93,7 @@ const MostActive = () => {
 				<Text style={styles.subHeader}>Stocks with the highest trading volume today.</Text>
 				<StockCards stocks={mostActive} barData={mostActiveBarData} displayVolume={true} />
 				<Text style={styles.subHeader}>Crypto with the highest trading volume today.</Text>
+				<CryptoCards cryptos={mostActiveCrypto} barDataCrypto={mostActiveBarDataCrypto} displayVolume={true} />
 			</View>
 			{/* Ensure SearchStocks has content to display */}
 		</View>

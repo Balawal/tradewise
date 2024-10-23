@@ -50,7 +50,6 @@ const SettingsScreen = () => {
 
   return (
     <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View>
         <Text style={styles.header}>Menu</Text>
       </View>
@@ -100,7 +99,6 @@ const SettingsScreen = () => {
           <Text style={styles.logoutButtonText}>Log out</Text>
         </TouchableOpacity>
       </View>
-      </ScrollView>
     </View>
   );
 };

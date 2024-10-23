@@ -23,9 +23,18 @@ const DeleteAccountScreen = () => {
               })
               .catch((error) => {
                 console.error("Error deleting user:", error);
+
+                if (error.code === 'auth/requires-recent-login') {
+                  Alert.alert('Error', 'Please re-login and try again.');
+                  setLoading(false); 
+                }
+                else {
+                  Alert.alert('Error', error.message);
+                  setLoading(false); 
+                }
               });
           } else {
-            console.log("No user signed in.");
+            console.log("No user logged in.");
         }
     };
 

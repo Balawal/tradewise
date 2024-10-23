@@ -14,6 +14,49 @@ const cache = new NodeCache({ stdTTL: 60 }); // Cache data for 10 minutes
 app.use(cors());
 app.use(express.json());
 
+CRYPTO_COMPARE_API_KEY = 'a5566e98117e03c939903d3a777725f3bcadf9343acfe0d7851bc9755991014d';
+
+//Endpoint for most active crypto
+app.get('/api/top-coins', async (req, res) => {
+  console.log('Received request for top coins by volume');
+
+  // Get the 'limit' and 'page' query parameters from the request, defaulting to 10 and 0 (first page)
+  const { limit = 10, page = 0, tsym = 'USD' } = req.query;
+
+  // Construct the cache key based on query params
+  const cacheKey = `top-coins-${limit}-${page}-${tsym}`;
+  const cachedData = cache.get(cacheKey);
+
+  if (cachedData) {
+    return res.json(cachedData);
+  }
+
+  try {
+    // Construct the API URL with the parameters
+    const url = `https://min-api.cryptocompare.com/data/top/totalvolfull?limit=${limit}&page=${page}&tsym=${tsym}&api_key=${CRYPTO_COMPARE_API_KEY}`;
+
+    // Make the request to the CryptoCompare API
+    const response = await axios.get(url);
+
+    // Extract the relevant data
+    const topCoinsData = response.data.Data.map(coin => {
+      return {
+        symbol: `${coin.CoinInfo.Internal}/USD`,
+        volume: coin.RAW.USD.VOLUME24HOURTO,
+        percent_change: coin.RAW.USD.CHANGEPCT24HOUR
+      };
+    });
+
+    // Cache the processed data with a 120-second timeout (2 minutes)
+    cache.set(cacheKey, topCoinsData, 120);
+
+    // Return the processed data
+    res.json(topCoinsData);
+  } catch (error) {
+    console.error('Error fetching top coins by volume:', error.message);
+    res.status(500).json({ error: 'Failed to fetch top coins by volume' });
+  }
+});
 
 const COINGECKO_API_KEY = 'CG-p6TWwyFCCqveXiD41PpoE1CV';
 

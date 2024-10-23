@@ -80,6 +80,13 @@ const CalculatorScreen = ({ route, navigation }) => {
     }
   };
 
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(num);
+  };
+
   const renderHeader = () => (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -188,11 +195,11 @@ const CalculatorScreen = ({ route, navigation }) => {
             </View>
             <View style={styles.centerColumn}>
               <Text style={styles.descriptor}>TOTAL PROFIT</Text>
-              <Text style={styles.under}>${calculationResult.totalProfit.toFixed(2)}</Text>
+              <Text style={styles.under}>${formatNumber(calculationResult.totalProfit)}</Text>
             </View>
             <View style={styles.rightColumn}>
             <Text style={styles.descriptor}>CAPITAL GAIN</Text>
-            <Text style={styles.under}>${calculationResult.capitalGain.toFixed(2)}</Text>
+            <Text style={styles.under}>${formatNumber(calculationResult.capitalGain)}</Text>
           </View>
           </View>
           <View style={styles.separator} />
@@ -218,15 +225,15 @@ const CalculatorScreen = ({ route, navigation }) => {
         <View style={styles.row}>
           <View style={styles.leftColumn}>
             <Text style={styles.descriptor}>TOTAL SHARES</Text>
-            <Text style={styles.under}>{calculationResult.totalShares.toFixed(2)}</Text>
+            <Text style={styles.under}>{formatNumber(calculationResult.totalShares)}</Text>
           </View>
           <View style={styles.centerColumn}>
             <Text style={styles.descriptor}>CURRENT PRICE</Text>
-            <Text style={styles.under}>${calculationResult.currentPrice.toFixed(2)}</Text>
+            <Text style={styles.under}>${formatNumber(calculationResult.currentPrice)}</Text>
           </View>
           <View style={styles.rightColumn}>
             <Text style={styles.descriptor}>PURCHASE PRICE</Text>
-            <Text style={styles.under}>${calculationResult.purchasePrice.toFixed(2)}</Text>
+            <Text style={styles.under}>${formatNumber(calculationResult.purchasePrice)}</Text>
           </View>
         </View>
         <View style={styles.separator} />
@@ -239,11 +246,11 @@ const CalculatorScreen = ({ route, navigation }) => {
           </View>
           <View style={styles.centerColumn}>
             <Text style={styles.descriptor}>ANNUAL RETURN</Text>
-            <Text style={styles.under}>{calculationResult.annualReturn.toFixed(2)}%</Text>
+            <Text style={styles.under}>{formatNumber(calculationResult.annualReturn)}%</Text>
           </View>
           <View style={styles.rightColumn}>
             <Text style={styles.descriptor}>TOTAL RETURN</Text>
-            <Text style={styles.under}>{calculationResult.totalReturn.toFixed(2)}%</Text>
+            <Text style={styles.under}>{formatNumber(calculationResult.totalReturn)}%</Text>
           </View>
         </View>
         <View style={styles.separator} />
@@ -253,15 +260,15 @@ const CalculatorScreen = ({ route, navigation }) => {
           <View style={styles.row}>
           <View style={styles.leftColumn}>
             <Text style={styles.descriptor}>DRIP</Text>
-            <Text style={styles.under}>${parseFloat(calculationResult.dripValue).toFixed(2)}</Text>
+            <Text style={styles.under}>${formatNumber(parseFloat(calculationResult.dripValue))}</Text>
           </View>
           <View style={styles.centerColumn}>
             <Text style={styles.descriptor}>CONTR. SHARES</Text>
-            <Text style={styles.under}>${parseFloat(calculationResult.periodicContributions.totalContribution).toFixed(2)}</Text>
+            <Text style={styles.under}>${formatNumber(parseFloat(calculationResult.periodicContributions.totalContribution))}</Text>
           </View>
           <View style={styles.rightColumn}>
             <Text style={styles.descriptor}>TOTAL CONTR.</Text>
-            <Text style={styles.under}>{parseFloat(calculationResult.periodicContributions.contributionShares).toFixed(2)}</Text>
+            <Text style={styles.under}>{formatNumber(parseFloat(calculationResult.periodicContributions.contributionShares))}</Text>
           </View>
         </View>
         </View>
@@ -421,6 +428,7 @@ const styles = StyleSheet.create({
   centerColumn: {
     flex: 1,
     alignItems: 'center',
+    padding: 2
   },
   rightColumn: {
     flex: 1,

@@ -12,6 +12,8 @@ const formatNum = (num) => {
     return (num / 1e9).toFixed(1) + 'B';   // Convert to billions
   } else if (num >= 1e6) {
     return (num / 1e6).toFixed(1) + 'M';   // Convert to millions
+  } else if (num >= 1e3) {
+    return (num / 1e3).toFixed(1) + 'K'; 
   } else {
     return num.toString();  // Return as is if less than 1 million
   }
@@ -19,33 +21,10 @@ const formatNum = (num) => {
 
 
 export const StockCards = ({ stocks, barData, displayVolume }) => {
-  const CARD_WIDTH = 150;  // Adjust this to the actual width of each card
-  const SCREEN_WIDTH = Dimensions.get('window').width;
-  const totalWidth = CARD_WIDTH * stocks.length;  // Total width of all cards
-  const animationDistance = totalWidth - SCREEN_WIDTH; 
-  const [translateX, setTranslateX] = useState(0);
-
   const navigation = useNavigation();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTranslateX((prev) => (prev <= -animationDistance ? 0 : prev - 2));  // Reset when reaches the end
-    }, 16);  // Adjust the interval as needed for smoothness
-
-    return () => clearInterval(interval);
-  }, [animationDistance]);
     
   return (
-    <MotiView
-      from={{ translateX: 0 }}
-      animate={{ translateX }}
-      transition={{
-        type: 'timing',
-        duration: 10000,  // Make the duration short since you handle the looping manually
-        easing: Easing.linear,
-      }}
-    >
-    <View style={{ flexDirection: 'row' }}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cardsWrapper}>
       {stocks.map(stock => (
         <TouchableOpacity
           key={stock.symbol}
@@ -101,45 +80,23 @@ export const StockCards = ({ stocks, barData, displayVolume }) => {
         </View>
         </TouchableOpacity>
       ))}
-    </View>
-    </MotiView>
+    </ScrollView>
   );
 };
   
-export const CryptoCards = ({ cryptos, barDataCrypto }) => {
-  const CARD_WIDTH = 150;  // Adjust this to the actual width of each card
-  const SCREEN_WIDTH = Dimensions.get('window').width;
-  const totalWidth = CARD_WIDTH * cryptos.length;  // Total width of all cards
-  const animationDistance = totalWidth - SCREEN_WIDTH; 
-  const [translateX, setTranslateX] = useState(0);
-  
+export const CryptoCards = ({ cryptos, barDataCrypto, displayVolume }) => {
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTranslateX((prev) => (prev <= -animationDistance ? 0 : prev - 2));  // Reset when reaches the end
-    }, 16);  // Adjust the interval as needed for smoothness
-
-    return () => clearInterval(interval);
-  }, [animationDistance]);
-
   return (
-    <MotiView
-      from={{ translateX: 0 }}
-      animate={{ translateX }}
-      transition={{
-        type: 'timing',
-        duration: 1000,  // Make the duration short since you handle the looping manually
-        easing: Easing.linear,
-      }}
-    >
-    <View style={{ flexDirection: 'row' }}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cardsWrapper}>
     {cryptos.map(crypto => (
       <TouchableOpacity
       key={crypto.symbol}
       style={styles.card}
       onPress={() => {
         const cryptoID = crypto.symbol.split('/')[0];
+        console.log('symbol:::', crypto.symbol);
+        console.log('ID:::', cryptoID);
         // Navigate to the CryptoDetail screen and pass the stock symbol
         navigation.navigate('CryptoDetail', { cryptoID, cryptoSymbol: cryptoID });
       }}
@@ -182,16 +139,15 @@ export const CryptoCards = ({ cryptos, barDataCrypto }) => {
           </View>
         )}
         <Text style={[styles.cardPrice, { color: crypto.isGainer ? 'green' : 'red' }]}>
-          ${crypto.price ? crypto.price.toFixed(2) : 'N/A'}
-        </Text>
-        <Text style={[styles.cardPercent, { color: crypto.isGainer ? 'green' : 'red' }]}>
-          {crypto.isGainer ? `+${crypto.percent_change?.toFixed(2)}` : `${crypto.percent_change?.toFixed(2)}`}%
-        </Text>
+          {displayVolume ? `${formatNum(crypto.volume)}` : `$${crypto.price ? crypto.price.toFixed(2) : 'N/A'}`}
+          </Text>
+          <Text style={[styles.cardPercent, { color: crypto.isGainer ? 'green' : 'red' }]}>
+            {crypto.isGainer ? `+${crypto.percent_change?.toFixed(2)}` : `${crypto.percent_change?.toFixed(2)}`}%
+          </Text>
       </View>
       </TouchableOpacity>
     ))}
-    </View>
-  </MotiView>
+    </ScrollView>
   );
     
   };

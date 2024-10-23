@@ -31,7 +31,7 @@ const ChangePasswordScreen = () => {
     }
 
     if (!user) {
-        Alert.alert('Error', 'No user is currently logged in.');
+        Alert.alert('Error', 'No user logged in.');
         setLoading(false);  
         return;
     }
@@ -50,10 +50,13 @@ const ChangePasswordScreen = () => {
 
         if (error.code === 'auth/wrong-password') {
             Alert.alert('Error', 'The old password you entered is incorrect.');
+            setLoading(false); 
         } else if (error.code === 'auth/requires-recent-login') {
             Alert.alert('Error', 'Please re-login and try again.');
+            setLoading(false); 
         } else {
             Alert.alert('Error', error.message);
+            setLoading(false); 
         }
     } finally {
         setLoading(false); 
