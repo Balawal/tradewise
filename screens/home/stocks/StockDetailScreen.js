@@ -31,6 +31,11 @@ const StockDetailScreen = ({ route, navigation }) => {
     setBackButtonColor(color);
   };
 
+  const handleCalendarPress = () => {
+    console.log("Calendar icon pressed!");
+    // You can add additional functionality here
+  };
+
   useEffect(() => {
     const fetchStockData = async () => {
       try {
@@ -50,7 +55,7 @@ const StockDetailScreen = ({ route, navigation }) => {
         const volData = await volResponse.json();
         setVolume(volData);
 
-        const earningsResponse = await fetch(`http://192.168.1.118:3000/api/stock-earnings?symbol=${stockSymbol}`);
+        const earningsResponse = await fetch(`http://192.168.1.118:3000/api/earnings-calendar?symbol=${stockSymbol}`);
         const earningsData = await earningsResponse.json();
         setEarnings(earningsData);
 
@@ -161,7 +166,9 @@ const StockDetailScreen = ({ route, navigation }) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back-ios" size="25" color={backButtonColor}  />
             </TouchableOpacity>
-            {/* <EarningsCalendar earningsDate={earnings?.annualEarnings?.[0]?.fiscalDateEnding || "None"} /> */}
+            <TouchableOpacity onPress={handleCalendarPress}>
+              <EarningsCalendar earningsDate={earnings?.firstEarningsDate || "None"} />
+            </TouchableOpacity>
             <WatchList symbol={stockSymbol} name={stockData.Name} price={price.trade.p} type="stock" color={backButtonColor} />
           </View>
             <Text style={styles.name}>{stockData.Name || "None"}</Text>
@@ -212,7 +219,7 @@ const StockDetailScreen = ({ route, navigation }) => {
               </View>
               <View style={styles.rightColumn}>
                 <Text style={styles.descriptor}>EARNING DATE</Text>
-                <Text style={styles.under}>{earnings?.annualEarnings?.[0]?.fiscalDateEnding || "None"}</Text>
+                <Text style={styles.under}>{earnings?.firstEarningsDate || "None"}</Text>
               </View>
             </View>
             <View style={styles.separator} />

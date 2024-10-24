@@ -4,46 +4,54 @@ import * as Calendar from 'expo-calendar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { format, subDays, subWeeks, subMonths } from 'date-fns';
 
-const EarningsCalendar = ({ earningsDate }) => {
+const EarningsCalendar = ({ earningsDate, stockSymbol, color }) => {
   const [calendarId, setCalendarId] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     // Fetch or create the default calendar when the component mounts
     getOrCreateDefaultCalendar();
   }, []);
 
-  // Function to fetch or create a calendar and store the id in state
   const getOrCreateDefaultCalendar = async () => {
-    const calendars = await Calendar.getCalendarsAsync();
-
-    // Find an existing calendar (if any)
-    const defaultCalendar = calendars.find(cal => cal.source && cal.source.name === 'Default');
-
-    if (defaultCalendar) {
-      setCalendarId(defaultCalendar.id);
-    } else {
-      // Create a new calendar if the default doesn't exist
-      const newCalendarId = await createCalendar();
-      setCalendarId(newCalendarId);
+    try {
+      const calendars = await Calendar.getCalendarsAsync();
+  
+      // Check if there's an existing calendar that allows event creation
+      const defaultCalendar = calendars.find(
+        (cal) =>
+          cal.allowsModifications && cal.source.name === 'iCloud' // Targeting iCloud calendar
+      );
+  
+      if (defaultCalendar) {
+        setCalendarId(defaultCalendar.id);
+      } else {
+        Alert.alert('Error', 'No calendar available that allows modifications.');
+      }
+    } catch (error) {
+      console.error('Error fetching calendars: ', error);
     }
   };
 
-  // Function to create a new calendar
   const createCalendar = async () => {
-    const defaultCalendarSource = await getDefaultCalendarSource();
-    
-    const newCalendarId = await Calendar.createCalendarAsync({
-      title: 'Earnings Date Calendar',
-      color: 'blue',
-      entityType: Calendar.EntityTypes.EVENT,
-      sourceId: defaultCalendarSource.id,
-      source: defaultCalendarSource,
-      name: 'Earnings Date Calendar',
-      accessLevel: Calendar.CalendarAccessLevel.OWNER,
-    });
+    try {
+      const defaultCalendarSource = await getDefaultCalendarSource();
 
-    return newCalendarId;
+      const newCalendarId = await Calendar.createCalendarAsync({
+        title: 'Earnings Date Calendar',
+        color: 'blue',
+        entityType: Calendar.EntityTypes.EVENT,
+        sourceId: defaultCalendarSource.id,
+        source: defaultCalendarSource,
+        name: 'Earnings Date Calendar',
+        accessLevel: Calendar.CalendarAccessLevel.OWNER,
+      });
+
+      return newCalendarId;
+    } catch (error) {
+      Alert.alert('Error', 'Unable to create calendar.');
+      console.error(error);
+    }
   };
 
   const getDefaultCalendarSource = async () => {
@@ -59,51 +67,42 @@ const EarningsCalendar = ({ earningsDate }) => {
 
   const handleAddToCalendar = async (reminderType) => {
     try {
-      // Request calendar permissions
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-
-      if (status === 'granted') {
-        let reminderDate;
-
-        switch (reminderType) {
-          case '1D':
-            reminderDate = subDays(new Date(earningsDate), 1);
-            break;
-          case '1W':
-            reminderDate = subWeeks(new Date(earningsDate), 1);
-            break;
-          case '1M':
-            reminderDate = subMonths(new Date(earningsDate), 1);
-            break;
-          default:
-            reminderDate = new Date(earningsDate);
-        }
-
-        console.log(reminderDate);
-
-        // Ensure that the calendarId is available
-        if (!calendarId) {
-          Alert.alert('Error', 'Unable to find or create calendar.');
-          return;
-        }
-
-        // Create a new calendar event
-        await Calendar.createEventAsync(calendarId, {
-          title: 'Earnings Date Reminder',
-          startDate: reminderDate,
-          endDate: reminderDate,
-          alarms: [{ relativeOffset: -15 }], // 15 mins before the event
-          notes: 'Earnings release for the stock',
-          timeZone: 'GMT',
-        });
-
-        Alert.alert('Success', 'Reminder added to your calendar');
-        setModalVisible(false); // Close the modal after adding event
-      } else {
-        Alert.alert('Permission Denied', 'Calendar permissions are required to add events.');
+      if (!calendarId) {
+        Alert.alert('Error', 'Unable to find or create calendar.');
+        return;
       }
+
+      let reminderDate;
+      switch (reminderType) {
+        case '1D':
+          reminderDate = subDays(new Date(earningsDate), 1);
+          break;
+        case '1W':
+          reminderDate = subWeeks(new Date(earningsDate), 1);
+          break;
+        case '1M':
+          reminderDate = subMonths(new Date(earningsDate), 1);
+          break;
+        default:
+          reminderDate = new Date(earningsDate);
+      }
+
+      console.log(reminderDate);
+
+      // Create a new calendar event
+      await Calendar.createEventAsync(calendarId, {
+        title: `${stockSymbol} - Earnings Date Reminder`,
+        startDate: reminderDate,
+        endDate: reminderDate,
+        alarms: [{ relativeOffset: -15 }], // 15 mins before the event
+        notes: `Earnings release for ${stockSymbol}. Be sure to check the latest market trends and updates.`,
+        timeZone: 'GMT',
+      });
+
+      Alert.alert('Success', 'Reminder added to your calendar');
+      setModalVisible(false); // Close the modal after adding event
     } catch (error) {
-      Alert.alert('Error', 'Unable to add event to calendar');
+      Alert.alert('Error', 'Unable to add event to calendar.');
       console.error(error);
     }
   };
@@ -112,7 +111,7 @@ const EarningsCalendar = ({ earningsDate }) => {
     <View>
       {/* Calendar icon to open the modal */}
       <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Icon name="calendar-today" size={25} color="white"/>
+        <Icon name="calendar-today" size={23} color={color} />
         <Text>Add to Calendar</Text>
       </TouchableOpacity>
 
@@ -130,19 +129,19 @@ const EarningsCalendar = ({ earningsDate }) => {
               style={styles.optionButton}
               onPress={() => handleAddToCalendar('1D')}
             >
-              <Text>1 Day Before</Text>
+              <Text style={styles.optionButtonText}>1 Day Before</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.optionButton}
               onPress={() => handleAddToCalendar('1W')}
             >
-              <Text>1 Week Before</Text>
+              <Text style={styles.optionButtonText}>1 Week Before</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.optionButton}
               onPress={() => handleAddToCalendar('1M')}
             >
-              <Text>1 Month Before</Text>
+              <Text style={styles.optionButtonText}>1 Month Before</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.closeButton}
@@ -162,11 +161,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Slightly transparent black
   },
   modalContent: {
     width: '80%',
-    backgroundColor: 'white',
+    backgroundColor: 'black', // Modal background color
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
@@ -175,25 +174,36 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
+    color: 'white', // Modal title text color
   },
   optionButton: {
-    marginVertical: 10,
-    padding: 10,
-    backgroundColor: '#E0E0E0',
-    width: '100%',
+    backgroundColor: '#000',  // Set background to black
+    borderRadius: 20,
+    padding: 8,
     alignItems: 'center',
-    borderRadius: 5,
+    borderWidth: 2,  // Add a border
+    borderColor: '#ad93c8', 
+    width: '100%',
+    marginTop: 15,
+  },
+  optionButtonText: {
+    color: '#ad93c8',  // Change the text color to match the border
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   closeButton: {
-    marginTop: 15,
-    padding: 10,
-    backgroundColor: '#FF6347',
-    width: '100%',
+    backgroundColor: '#000',  // Set background to black
+    borderRadius: 20,
+    padding: 8,
     alignItems: 'center',
-    borderRadius: 5,
+    borderWidth: 2,  // Add a border
+    borderColor: 'white', 
+    width: '100%',
+    marginTop: 15, 
   },
   closeButtonText: {
-    color: 'white',
+    color: 'white',  // Change the text color to match the border
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

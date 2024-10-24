@@ -8,6 +8,7 @@ import { auth } from '../../config/firebase';
 import { db } from '../../config/firebase'; // Import Firestore
 import { doc, setDoc } from 'firebase/firestore'; 
 import { MaterialIndicator } from 'react-native-indicators';
+import GoogleSignUpButton from '../../assets/icons/googleSignIn';
 //import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
 
 // GoogleSignin.configure({
@@ -156,22 +157,7 @@ export default function SignUpScreen() {
                     Or
                 </Text>
                 <View className="flex-row justify-center space-x-12">
-                    
-                    <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
-                        <Image source={require('../../assets/icons/google.png')}
-                            className="w-10 h-10" />
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
-                        <Image source={require('../../assets/icons/facebook.png')}
-                            className="w-10 h-10" />
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
-                        <Image source={require('../../assets/icons/apple-logo.png')}
-                            className="w-10 h-10" />
-                    </TouchableOpacity>
-                
+                <GoogleSignUpButton />
                 </View>
                 <View className="flex-row justify-center mt-14">
                         <Text className="text-gray-500 font-semibold">Already have an account?</Text>

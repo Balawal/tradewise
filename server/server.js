@@ -937,6 +937,68 @@ app.get('/api/most-active', async (req, res) => {
 
 const ALPHA_VANTAGE_API_KEY = '6ADIY1OCTVMPVEY0'; 
 
+// Endpoint to get earnings calendar
+app.get('/api/earnings-calendar', async (req, res) => {
+  const { symbol } = req.query;
+
+  if (!symbol) {
+    return res.status(400).json({ error: 'Symbol is required' });
+  }
+
+  const horizon = '12month'; // Setting horizon to 12 months
+  const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+
+  try {
+    const response = await axios.get('https://www.alphavantage.co/query', {
+      params: {
+        function: 'EARNINGS_CALENDAR',
+        symbol: symbol,
+        horizon: horizon,
+        apikey: apiKey,
+      },
+      responseType: 'text', // Ensure the response is treated as text
+    });
+
+    const csvData = response.data; // Get the CSV data from the response
+    console.log('earnings data:::', csvData); // Log the raw CSV data
+
+    // Now use your parseCSV function
+    const earningsData = parseCSV(csvData);
+
+    if (earningsData.length > 0) {
+      const firstEarningsDate = earningsData[0].reportDate; // Access the first report date
+      return res.json({ firstEarningsDate });
+    }
+
+    res.json({ firstEarningsDate: null }); // No earnings found
+  } catch (error) {
+    console.error('Error fetching earnings calendar:', error.message);
+    res.status(500).json({ error: 'Failed to fetch earnings calendar' });
+  }
+});
+
+// Function to parse CSV into JSON
+const parseCSV = (csvString) => {
+  // Check if csvString is defined and not empty
+  if (!csvString) {
+    throw new Error('CSV string is undefined or empty');
+  }
+
+  // Normalize line breaks and split the CSV string into rows
+  const rows = csvString.split('\n').map(row => row.split(',').map(cell => cell.trim()));
+
+  console.log('rows:::', rows);
+  const headers = rows[0].map(header => header.replace(/\r/, '')); // Remove any carriage return from headers
+  console.log('headers:::', headers);
+  
+  return rows.slice(1).map(row => {
+    return row.reduce((acc, val, idx) => {
+      acc[headers[idx]] = val; // No need to trim again since we've done it already
+      return acc;
+    }, {});
+  });
+};
+
 // Endpoint to search for stocks
 app.get('/api/search-query', async (req, res) => {
   console.log('Received request for stock search');
@@ -1171,41 +1233,6 @@ app.get('/api/stock-volume', async (req, res) => {
 });
 
 
-//Endpoint to get stock earnings
-app.get('/api/stock-earnings', async (req, res) => {
-  console.log('Received request for stock earnings');
-  
-  const { symbol } = req.query;
-
-  if (!symbol) {
-    return res.status(400).json({ error: 'Symbol parameter is required' });
-  }
-
-  try {
-    const cacheKey = `stock-earnings-${symbol}`;
-    const cachedData = cache.get(cacheKey);
-
-    if (cachedData) {
-      return res.json(cachedData);
-    }
-
-    const response = await axios.get(`https://www.alphavantage.co/query`, {
-      params: {
-        function: 'EARNINGS',
-        symbol: symbol,
-        apikey: ALPHA_VANTAGE_API_KEY,
-      },
-    });
-
-    const earnings = response.data;
-    cache.set(cacheKey, earnings);
-
-    res.json(earnings);
-  } catch (error) {
-    console.error('Error fetching stock earnings:', error.message);
-    res.status(500).json({ error: 'Failed to fetch stock earnings' });
-  }
-});
 
 const determineSentiment = (score) => {
   if (score >= 0.15) return 'positive';

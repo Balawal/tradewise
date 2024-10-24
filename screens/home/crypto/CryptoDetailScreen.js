@@ -29,6 +29,11 @@ const CryptoDetailScreen = ({ route }) => {
     setBackButtonColor(color);
   };
 
+  const handleCalendarPress = () => {
+    console.log("Calendar icon pressed!");
+    // You can add additional functionality here
+  };
+
   useEffect(() => {
     const fetchCryptoData = async () => {
       try {
@@ -127,7 +132,7 @@ const CryptoDetailScreen = ({ route }) => {
     }
   };
 
-  const earning = "2024-10-30";
+  const earning = "2024-11-30";
 
   const renderHeader = () => (
     <View>
@@ -135,11 +140,20 @@ const CryptoDetailScreen = ({ route }) => {
         {cryptoData ? (
           <>
           <View style={styles.header}>
+            
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back-ios" size="25" color={backButtonColor} />
             </TouchableOpacity>
-            {/* <EarningsCalendar earningsDate={earning} /> */}
+            
+            <View style={{ marginLeft: 260 }}>
+              <TouchableOpacity onPress={handleCalendarPress}>
+                <EarningsCalendar earningsDate={earning} stockSymbol={cryptoData.symbol} color={backButtonColor} />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={{ marginTop: -2, marginRight: 15 }}>
             <WatchList symbol={(cryptoData.symbol).toUpperCase()} name={cryptoData.name} price={cryptoData.market_data.current_price.usd.toLocaleString()} type="crypto" color={backButtonColor}/>
+            </View>
           </View>
             <Text style={styles.name}>{cryptoData.name}</Text>
             <Text style={styles.price}>
@@ -289,7 +303,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     color: 'white',
     fontWeight: 'bold',
-    marginTop: 25,
+    marginTop: 10,
     marginBottom: 8,
   },
   price: {
