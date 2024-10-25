@@ -40,10 +40,11 @@ app.get('/api/top-coins', async (req, res) => {
 
     // Extract the relevant data
     const topCoinsData = response.data.Data.map(coin => {
+      const usdData = coin.RAW && coin.RAW.USD;
       return {
         symbol: `${coin.CoinInfo.Internal}/USD`,
-        volume: coin.RAW.USD.VOLUME24HOURTO,
-        percent_change: coin.RAW.USD.CHANGEPCT24HOUR
+        volume: usdData ? coin.RAW.USD.VOLUME24HOURTO : 0,
+        percent_change: usdData ? coin.RAW.USD.CHANGEPCT24HOUR : 0
       };
     });
 
@@ -1954,10 +1955,10 @@ app.get('/api/scrape-tweets', async (req, res) => {
 
     const profiles = [
       //'https://nitter.privacydev.net/AdamMancini4',
-      'https://xcancel.com/AdamMancini4',
+      //'https://xcancel.com/AdamMancini4',
       //'https://nitter.poast.org/AdamMancini4',
-      //'https://nitter.lucabased.xyz/AdamMancini4',
-      //'https://nitter.lucabased.xyz/InvestorsLive',
+      'https://nitter.lucabased.xyz/AdamMancini4',
+      'https://nitter.lucabased.xyz/InvestorsLive',
       // 'https://nitter.lucabased.xyz/RedDogT3',
     ];
 

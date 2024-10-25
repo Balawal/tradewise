@@ -5,6 +5,7 @@ import { db } from '../../config/firebase';
 import LastPrice from '../../components/stockdetails/lastPrice';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
+import { MotiView } from 'moti';
 
 const WatchlistScreen = () => {
   const [favorites, setFavorites] = useState([]);
@@ -43,7 +44,14 @@ const WatchlistScreen = () => {
             <LastPrice stockSymbol={item.symbol} containerStyle={styles.priceContainer} textStyle={styles.price}/>
           ) : (
             // Render static price for crypto
+            <MotiView
+              from={{ translateY: -10, opacity: 0 }}
+              animate={{ translateY: 0, opacity: 1 }}
+              transition={{ type: 'timing', duration: 300 }}
+              key={item.price}  // Ensure animation re-runs on price change
+            >
             <Text style={styles.price}>${parseFloat(item.price).toFixed(2)}</Text>
+            </MotiView>
           )}
         </View>
         <View style={styles.separator} />

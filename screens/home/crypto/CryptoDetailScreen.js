@@ -132,8 +132,6 @@ const CryptoDetailScreen = ({ route }) => {
     }
   };
 
-  const earning = "2024-11-30";
-
   const renderHeader = () => (
     <View>
       <View>
@@ -145,15 +143,7 @@ const CryptoDetailScreen = ({ route }) => {
               <Icon name="arrow-back-ios" size="25" color={backButtonColor} />
             </TouchableOpacity>
             
-            <View style={{ marginLeft: 260 }}>
-              <TouchableOpacity onPress={handleCalendarPress}>
-                <EarningsCalendar earningsDate={earning} stockSymbol={cryptoData.symbol} color={backButtonColor} />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={{ marginTop: -2, marginRight: 15 }}>
             <WatchList symbol={(cryptoData.symbol).toUpperCase()} name={cryptoData.name} price={cryptoData.market_data.current_price.usd.toLocaleString()} type="crypto" color={backButtonColor}/>
-            </View>
           </View>
             <Text style={styles.name}>{cryptoData.name}</Text>
             <Text style={styles.price}>
@@ -303,7 +293,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     color: 'white',
     fontWeight: 'bold',
-    marginTop: 10,
+    marginTop: 15,
     marginBottom: 8,
   },
   price: {

@@ -71,9 +71,16 @@ export const StockCards = ({ stocks, barData, displayVolume }) => {
               />
             </View>
           )}
-          <Text style={[styles.cardPrice, { color: stock.isGainer ? 'green' : 'red' }]}>
-          {displayVolume ? `${formatNum(stock.volume)}` : `$${stock.price ? stock.price.toFixed(2) : 'N/A'}`}
-          </Text>
+          <MotiView
+              from={{ translateY: -10, opacity: 0 }}
+              animate={{ translateY: 0, opacity: 1 }}
+              transition={{ type: 'timing', duration: 300 }}
+              key={stock.price}  // Ensure animation re-runs on price change
+            >
+            <Text style={[styles.cardPrice, { color: stock.isGainer ? 'green' : 'red' }]}>
+            {displayVolume ? `${formatNum(stock.volume)}` : `$${stock.price ? stock.price.toFixed(2) : 'N/A'}`}
+            </Text>
+          </MotiView>
           <Text style={[styles.cardPercent, { color: stock.isGainer ? 'green' : 'red' }]}>
             {stock.isGainer ? `+${stock.percent_change?.toFixed(2)}` : `${stock.percent_change?.toFixed(2)}`}%
           </Text>
@@ -138,9 +145,16 @@ export const CryptoCards = ({ cryptos, barDataCrypto, displayVolume }) => {
             />
           </View>
         )}
-        <Text style={[styles.cardPrice, { color: crypto.isGainer ? 'green' : 'red' }]}>
-          {displayVolume ? `${formatNum(crypto.volume)}` : `$${crypto.price ? crypto.price.toFixed(2) : 'N/A'}`}
-          </Text>
+          <MotiView
+              from={{ translateY: -10, opacity: 0 }}
+              animate={{ translateY: 0, opacity: 1 }}
+              transition={{ type: 'timing', duration: 300 }}
+              key={crypto.price}
+              >
+            <Text style={[styles.cardPrice, { color: crypto.isGainer ? 'green' : 'red' }]}>
+              {displayVolume ? `${formatNum(crypto.volume)}` : `$${crypto.price ? crypto.price.toFixed(2) : 'N/A'}`}
+            </Text>
+          </MotiView>
           <Text style={[styles.cardPercent, { color: crypto.isGainer ? 'green' : 'red' }]}>
             {crypto.isGainer ? `+${crypto.percent_change?.toFixed(2)}` : `${crypto.percent_change?.toFixed(2)}`}%
           </Text>

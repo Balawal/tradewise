@@ -49,8 +49,9 @@ const MostActive = () => {
 			try {
 				console.log("fetching most active crypto");
 				const responseCrypto = await fetch(`http://192.168.1.118:3000/api/top-coins`);
-				if (!responseCrypto.ok) throw new Error(`HTTP error! status: ${response.status}`);
+				if (!responseCrypto.ok) throw new Error(`HTTP error! status: ${responseCrypto.status}`);
 				const dataCrypto = await responseCrypto.json();
+				console.log(dataCrypto);
 
 				if (!Array.isArray(dataCrypto)) throw new Error("Invalid response format");
 

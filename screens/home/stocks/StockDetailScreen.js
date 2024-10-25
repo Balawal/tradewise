@@ -57,6 +57,7 @@ const StockDetailScreen = ({ route, navigation }) => {
 
         const earningsResponse = await fetch(`http://192.168.1.118:3000/api/earnings-calendar?symbol=${stockSymbol}`);
         const earningsData = await earningsResponse.json();
+        console.log('earning date:::', earningsData);
         setEarnings(earningsData);
 
         const sentimentResponse = await fetch(`http://192.168.1.118:3000/api/stock-sentiment?symbol=${stockSymbol}`);
@@ -163,13 +164,21 @@ const StockDetailScreen = ({ route, navigation }) => {
         {stockData ? (
           <>
           <View style={styles.header}>
+            
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back-ios" size="25" color={backButtonColor}  />
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleCalendarPress}>
-              <EarningsCalendar earningsDate={earnings?.firstEarningsDate || "None"} />
-            </TouchableOpacity>
+           
+            <View style={{ marginLeft: 260 }}>
+              <TouchableOpacity onPress={handleCalendarPress}>
+                <EarningsCalendar earningsDate={earnings?.firstEarningsDate || "None"} stockSymbol={stockSymbol} color={backButtonColor}/>
+              </TouchableOpacity>
+            </View>
+            
+            <View style={{ marginTop: -2, marginRight: 15 }}>
             <WatchList symbol={stockSymbol} name={stockData.Name} price={price.trade.p} type="stock" color={backButtonColor} />
+            </View>
+          
           </View>
             <Text style={styles.name}>{stockData.Name || "None"}</Text>
             <LastPrice stockSymbol={stockSymbol} containerStyle={styles.containerLP} textStyle={styles.latestTrade} />
@@ -350,7 +359,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     color: 'white',
     fontWeight: 'bold',
-    marginTop: 25,
+    marginTop: 10,
     marginBottom: 8,
   },
   keystats: {
