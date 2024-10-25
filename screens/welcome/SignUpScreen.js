@@ -9,12 +9,12 @@ import { db } from '../../config/firebase'; // Import Firestore
 import { doc, setDoc } from 'firebase/firestore'; 
 import { MaterialIndicator } from 'react-native-indicators';
 import GoogleSignUpButton from '../../assets/icons/googleSignIn';
-//import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
 
-// GoogleSignin.configure({
-//     webClientId: '413835240721-m5r9lq7deapq3esuti0un7fabt11l3du.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+GoogleSignin.configure({
+    webClientId: '413835240721-m5r9lq7deapq3esuti0un7fabt11l3du.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
    
-//   });
+  });
 
 export default function SignUpScreen() {
     const navigation = useNavigation();
@@ -64,30 +64,30 @@ export default function SignUpScreen() {
         }
     }
 
-    // const signIn = async () => {
-    //     try {
-    //       await GoogleSignin.hasPlayServices();
-    //       const {idToken} = await GoogleSignin.signIn();
-    //       const googleCredentials = GoogleAuthProvider.credential(idToken);
-    //       await signInWithCredential(googleCredentials);
-    //     } catch (error) {
-    //         console.log('got error: ', error.message);
-    //       if (isErrorWithCode(error)) {
-    //         switch (error.code) {
-    //           case statusCodes.IN_PROGRESS:
-    //             // operation (eg. sign in) already in progress
-    //             break;
-    //           case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-    //             // Android only, play services not available or outdated
-    //             break;
-    //           default:
-    //           // some other error happened
-    //         }
-    //       } else {
-    //         // an error that's not related to google sign in occurred
-    //       }
-    //     }
-    // };
+    const signIn = async () => {
+        try {
+          await GoogleSignin.hasPlayServices();
+          const {idToken} = await GoogleSignin.signIn();
+          const googleCredentials = GoogleAuthProvider.credential(idToken);
+          await signInWithCredential(googleCredentials);
+        } catch (error) {
+            console.log('got error: ', error.message);
+          if (isErrorWithCode(error)) {
+            switch (error.code) {
+              case statusCodes.IN_PROGRESS:
+                // operation (eg. sign in) already in progress
+                break;
+              case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                // Android only, play services not available or outdated
+                break;
+              default:
+              // some other error happened
+            }
+          } else {
+            // an error that's not related to google sign in occurred
+          }
+        }
+    };
     
     return(
         <View className="flex-1 bg-black">
@@ -157,7 +157,9 @@ export default function SignUpScreen() {
                     Or
                 </Text>
                 <View className="flex-row justify-center space-x-12">
-                <GoogleSignUpButton />
+                    <TouchableOpacity onPress={signIn}>
+                        <GoogleSignUpButton />
+                    </TouchableOpacity>
                 </View>
                 <View className="flex-row justify-center mt-14">
                         <Text className="text-gray-500 font-semibold">Already have an account?</Text>
