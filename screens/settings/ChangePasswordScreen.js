@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,  // Add a border
     borderColor: '#ad93c8',
-    marginTop: 350
+    marginTop: 320
   },
   submitButtonText: {
     color: '#ad93c8',

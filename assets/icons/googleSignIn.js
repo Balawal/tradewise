@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, Image, View, StyleSheet } from 'react-native';
 
-const GoogleSignUpButton = ({ onPress }) => {
+const GoogleSignUpButton = ({ onPress, label }) => {
     return (
         <TouchableOpacity style={styles.button} onPress={onPress}>
             <View style={styles.buttonContent}>
@@ -9,7 +9,7 @@ const GoogleSignUpButton = ({ onPress }) => {
                     source={require('../../assets/icons/google.png')} 
                     style={styles.icon} 
                 />
-                <Text style={styles.buttonText}>Sign up with Google</Text>
+                <Text style={styles.buttonText}>{label}</Text>
             </View>
         </TouchableOpacity>
     );

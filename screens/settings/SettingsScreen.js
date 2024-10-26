@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     marginLeft: 5
   },
   logoutContainer: {
-    marginTop: 150,
+    marginTop: 120,
     padding: 16,
   },
   logoutButton: {

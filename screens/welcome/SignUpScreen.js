@@ -12,8 +12,7 @@ import GoogleSignUpButton from '../../assets/icons/googleSignIn';
 import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
 
 GoogleSignin.configure({
-    webClientId: '413835240721-m5r9lq7deapq3esuti0un7fabt11l3du.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
-   
+    webClientId: '413835240721-49h829u7ipn7pmr8tp1tnsbta3e5o33i.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
   });
 
 export default function SignUpScreen() {
@@ -66,26 +65,46 @@ export default function SignUpScreen() {
 
     const signIn = async () => {
         try {
-          await GoogleSignin.hasPlayServices();
-          const {idToken} = await GoogleSignin.signIn();
-          const googleCredentials = GoogleAuthProvider.credential(idToken);
-          await signInWithCredential(googleCredentials);
-        } catch (error) {
-            console.log('got error: ', error.message);
-          if (isErrorWithCode(error)) {
-            switch (error.code) {
-              case statusCodes.IN_PROGRESS:
-                // operation (eg. sign in) already in progress
-                break;
-              case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-                // Android only, play services not available or outdated
-                break;
-              default:
-              // some other error happened
+            await GoogleSignin.hasPlayServices();
+            await GoogleSignin.signOut();
+    
+            // Retrieve user info from Google Sign-In
+            const userInfo = await GoogleSignin.signIn();
+    
+            // Extract idToken and name
+            const idToken = userInfo.idToken || (userInfo.data && userInfo.data.idToken);
+    
+            if (!idToken) {
+                console.log('No ID token received');
+                Alert.alert('Error', 'Failed to receive ID token. Please try again.');
+                return;
             }
-          } else {
-            // an error that's not related to google sign in occurred
-          }
+    
+            // Use idToken to create Firebase credential and sign in
+            const googleCredential = GoogleAuthProvider.credential(idToken);
+            const userCredential = await signInWithCredential(auth, googleCredential);
+            const user = userCredential.user;
+
+            const email = user.email;
+            const name = user.displayName;
+    
+            // Store the user's name and email in Firestore
+            await setDoc(doc(db, 'users', user.uid), {
+                username: name,
+                email: email,
+            });
+
+            console.log('User signed in with Google and data saved to Firestore:', user);
+    
+        } catch (error) {
+            console.error('Sign-In Error:', error);
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                Alert.alert('Error', 'Sign-in was cancelled.');
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                Alert.alert('Error', 'Google Play Services are not available.');
+            } else {
+                Alert.alert('Error', 'An unknown error occurred during Google Sign-In.');
+            }
         }
     };
     
@@ -157,9 +176,7 @@ export default function SignUpScreen() {
                     Or
                 </Text>
                 <View className="flex-row justify-center space-x-12">
-                    <TouchableOpacity onPress={signIn}>
-                        <GoogleSignUpButton />
-                    </TouchableOpacity>
+                        <GoogleSignUpButton onPress={signIn} label="Sign up with Google"/>
                 </View>
                 <View className="flex-row justify-center mt-14">
                         <Text className="text-gray-500 font-semibold">Already have an account?</Text>
