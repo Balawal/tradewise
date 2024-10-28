@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+require('dotenv').config();
+
+const ALPACA_API_KEY = process.env.ALPACA_API_KEY;
+const ALPACA_API_SECRET = process.env.ALPACA_API_SECRET;
 
 let stockWebSocketInstance = null;
 let cryptoWebSocketInstance = null;
@@ -88,8 +92,8 @@ export const useStockWebSocket = (onMessageCallback) => {
       console.log('Stock WebSocket connection opened.');
       stockWebSocketInstance.send(JSON.stringify({
         action: 'auth',
-        key: 'PKH9EBVMYSPWD2P7CN1F',
-        secret: 'Rj6GHHhlEauKnnsyk6QN8JNczpZacRZbwdnnZ4a5',
+        key: ALPACA_API_KEY,
+        secret: ALPACA_API_SECRET,
       }));
       setIsConnected(true);
     };
@@ -142,8 +146,8 @@ export const useCryptoWebSocket = (onMessageCallback) => {
       console.log('Crypto WebSocket connection opened.');
       cryptoWebSocketInstance.send(JSON.stringify({
         action: 'auth',
-        key: 'PKH9EBVMYSPWD2P7CN1F',
-        secret: 'Rj6GHHhlEauKnnsyk6QN8JNczpZacRZbwdnnZ4a5',
+        key: ALPACA_API_KEY,
+        secret: ALPACA_API_SECRET,
       }));
       setIsConnectedCrypto(true);
     };

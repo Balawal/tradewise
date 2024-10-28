@@ -1,12 +1,13 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios = require("axios");
+require('dotenv').config();
 
 // Initialize Firebase Admin SDK
 admin.initializeApp();
 const db = admin.firestore();
 
-const COINGECKO_API_KEY = "CG-p6TWwyFCCqveXiD41PpoE1CV";
+const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
 
 // Scheduled function to update crypto prices every minute
 exports.updateCryptoPrices = functions.pubsub.schedule("every 10 minutes").onRun(async () => {

@@ -14,7 +14,7 @@ const cache = new NodeCache({ stdTTL: 60 }); // Cache data for 10 minutes
 app.use(cors());
 app.use(express.json());
 
-CRYPTO_COMPARE_API_KEY = 'a5566e98117e03c939903d3a777725f3bcadf9343acfe0d7851bc9755991014d';
+const CRYPTO_COMPARE_API_KEY = process.env.CRYPTO_COMPARE_API_KEY;
 
 //Endpoint for most active crypto
 app.get('/api/top-coins', async (req, res) => {
@@ -59,7 +59,7 @@ app.get('/api/top-coins', async (req, res) => {
   }
 });
 
-const COINGECKO_API_KEY = 'CG-p6TWwyFCCqveXiD41PpoE1CV';
+const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
 
 
 //Endpoint for stock calculator
@@ -865,7 +865,7 @@ app.get('/api/search-query-crypto', async (req, res) => {
 
 
 
-const FIN_MODEL_API_KEY = 'LwjzM54U5mzuh0sVt21s0fxmRkmv7YT3';
+const FIN_MODEL_API_KEY = process.env.FIN_MODEL_API_KEY;
 
 
 // Endpoint to get most active: stocks from alpaca api
@@ -936,7 +936,7 @@ app.get('/api/most-active', async (req, res) => {
 
 
 
-const ALPHA_VANTAGE_API_KEY = '6ADIY1OCTVMPVEY0'; 
+const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 
 // Endpoint to get earnings calendar
 app.get('/api/earnings-calendar', async (req, res) => {
@@ -1343,8 +1343,8 @@ app.get('/api/stock-sentiment', async (req, res) => {
 
 
 
-const ALPACA_API_KEY = 'PKH9EBVMYSPWD2P7CN1F';
-const ALPACA_API_SECRET = 'Rj6GHHhlEauKnnsyk6QN8JNczpZacRZbwdnnZ4a5';
+const ALPACA_API_KEY = process.env.ALPACA_API_KEY;
+const ALPACA_API_SECRET = process.env.ALPACA_API_SECRET;
 
 const alpacaHeaders = {
   'APCA-API-KEY-ID': ALPACA_API_KEY,
