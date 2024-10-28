@@ -9,6 +9,7 @@ import MostActive from "./mostActive";
 import { BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import useFetchTopMovers from "./useFetchTopMovers";
+import SkeletonLoader from "./skeletonLoading";
 
 const TopMovers = () => {
 	const { barData, combinedCrypto, combinedStocks, marketData, setMarketData, marketDataCrypto, setMarketDataCrypto, barDataCrypto } =
@@ -24,6 +25,8 @@ const TopMovers = () => {
 
 	const bottomSheetModalRef = useRef(null);
 	const snapPoints = ["80%"];
+
+	const loading = !combinedStocks.length && !combinedCrypto.length;
 
 	const handlePresentModal = () => {
 		console.log("Present modal triggered");
@@ -47,9 +50,26 @@ const TopMovers = () => {
 				<View>
 					<Text style={styles.header}>Top Movers</Text>
 					<Text style={styles.subHeader}>Stocks making the biggest moves today.</Text>
-					<StockCards stocks={combinedStocks} barData={barData} />
-					<Text style={styles.subHeader}>Crypto making the biggest moves today.</Text>
-					<CryptoCards cryptos={combinedCrypto} barDataCrypto={barDataCrypto} />
+					{loading ? (
+							// Show skeleton loaders while loading
+							<View style={styles.cardsWrapper}>
+								<SkeletonLoader />
+								<SkeletonLoader />
+								<SkeletonLoader />
+							</View>
+						) : (
+							<StockCards stocks={combinedStocks} barData={barData} />
+						)}
+					<Text style={styles.subHeader}>Crypto making the biggest moves today.</Text>					
+					{loading ? (
+							<View style={styles.cardsWrapper}>
+								<SkeletonLoader />
+								<SkeletonLoader />
+								<SkeletonLoader />
+							</View>
+						) : (
+							<CryptoCards cryptos={combinedCrypto} barDataCrypto={barDataCrypto} />
+						)}
 					<MostActive />
 				</View>
 			</ScrollView>

@@ -6,7 +6,6 @@ import HomeScreen from '../screens/home/HomeScreen';
 import LoginScreen from '../screens/welcome/LoginScreen';
 import SignUpScreen from '../screens/welcome/SignUpScreen';
 import WelcomeScreen from '../screens/welcome/WelcomeScreen';
-import SearchScreen from '../screens/SearchScreen';
 import LottieView from 'lottie-react-native';
 import useAuth from '../hooks/useAuth';
 import BottomTabNavigation from './bottomTabNavigation';

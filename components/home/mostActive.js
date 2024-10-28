@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { StockCards, CryptoCards } from "./cards";
+import SkeletonLoader from "./skeletonLoading";
 
 const MostActive = () => {
 	const [mostActive, setMostActive] = useState([]);
 	const [mostActiveBarData, setMostActiveBarData] = useState({});
 	const [mostActiveCrypto, setMostActiveCrypto] = useState([]);
 	const [mostActiveBarDataCrypto, setMostActiveBarDataCrypto] = useState({});
+	const loading = !mostActive.length && !mostActiveCrypto.length;
 
 	useEffect(() => {
 		const fetchMostActive = async () => {
@@ -92,9 +94,25 @@ const MostActive = () => {
 			<View>
 				<Text style={styles.header}>Most Active</Text>
 				<Text style={styles.subHeader}>Stocks with the highest trading volume today.</Text>
-				<StockCards stocks={mostActive} barData={mostActiveBarData} displayVolume={true} />
+				{loading ? (
+					<View style={styles.cardsWrapper}>
+						<SkeletonLoader />
+						<SkeletonLoader />
+						<SkeletonLoader />
+					</View>
+				) : (
+					<StockCards stocks={mostActive} barData={mostActiveBarData} displayVolume={true} />
+				)}
 				<Text style={styles.subHeader}>Crypto with the highest trading volume today.</Text>
-				<CryptoCards cryptos={mostActiveCrypto} barDataCrypto={mostActiveBarDataCrypto} displayVolume={true} />
+				{loading ? (
+					<View style={styles.cardsWrapper}>
+						<SkeletonLoader />
+						<SkeletonLoader />
+						<SkeletonLoader />
+					</View>
+				) : (
+					<CryptoCards cryptos={mostActiveCrypto} barDataCrypto={mostActiveBarDataCrypto} displayVolume={true} />
+				)}
 			</View>
 			{/* Ensure SearchStocks has content to display */}
 		</View>

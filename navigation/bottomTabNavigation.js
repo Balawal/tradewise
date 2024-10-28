@@ -7,7 +7,6 @@ import SettingsScreen from '../screens/settings/SettingsScreen';
 import TwitterScreen from '../screens/social/TwitterScreen';
 import NewsScreen from '../screens/social/news/NewsScreen';
 import SocialScreen from '../screens/social/SocialScreen';
-import SearchScreen from '../screens/SearchScreen';
 import WatchListScreen from '../screens/watchlist/WatchListScreen';
 import WatchListStackNavigator from './watchListCalculator';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -64,7 +63,6 @@ const BottomTabNavigation = () => {
         >
             <Tab.Screen name="Home" component={HomeStackNavigator} />
             <Tab.Screen name="Cash" component={WatchListStackNavigator}/>
-            {/* <Tab.Screen name="Notifications" component={SearchScreen} /> */}
             <Tab.Screen name="Social" component={SocialScreen} />
             <Tab.Screen name="Settings" component={SettingsStackNavigator} />
         </Tab.Navigator>
