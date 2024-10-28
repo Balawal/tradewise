@@ -1,9 +1,16 @@
+require('dotenv').config({ path: '../.env' });
+console.log(process.env)
 const express = require('express');
 const axios = require('axios');
 const NodeCache = require('node-cache');
 const cors = require('cors');
 const puppeteer = require('puppeteer');
-require('dotenv').config();
+console.log('alpaca API Key:', process.env.ALPACA_API_KEY);
+console.log('alpha vantage API Key:', process.env.ALPHA_VANTAGE_API_KEY);
+console.log('fin model API Key:', process.env.FIN_MODEL_API_KEY);
+console.log('coingecko API Key:', process.env.COINGECKO_API_KEY);
+console.log('crypto compare API Key:', process.env.CRYPTO_COMPARE_API_KEY);
+console.log('alpaca API secret:', process.env.ALPACA_API_SECRET);
 const fs = require('fs');
 const path = require('path');
 const cron = require('node-cron');
@@ -1367,6 +1374,8 @@ app.get('/api/top-movers', async (req, res) => {
     const response = await axios.get(`https://data.alpaca.markets/v1beta1/screener/stocks/movers?top=5`, {
       headers: alpacaHeaders,
     });
+
+    console.log('Response data:', response.data);
 
     const topMovers = response.data;
     cache.set(cacheKey, topMovers);
