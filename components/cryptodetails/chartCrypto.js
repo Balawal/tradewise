@@ -44,15 +44,15 @@ const ChartCrypto = ({cryptoID, onColorChange, selectedTimeframe, setSelectedTim
     setIsLoading(true);
     try {
       const endpointMap = {
-        '1D': '/api/crypto-one-day-bars',
-        '1W': '/api/crypto-one-week-bars',
-        '1M': '/api/crypto-one-month-bars',
-        '3M': '/api/crypto-three-month-bars',
-        '6M': '/api/crypto-six-month-bars',
-        '1Y': '/api/crypto-one-year-bars',
+        '1D': '/crypto-one-day-bars',
+        '1W': '/crypto-one-week-bars',
+        '1M': '/crypto-one-month-bars',
+        '3M': '/crypto-three-month-bars',
+        '6M': '/crypto-six-month-bars',
+        '1Y': '/crypto-one-year-bars',
       };
 
-      const response = await axios.get(`http://192.168.1.118:3000${endpointMap[timeframe]}`, {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}${endpointMap[timeframe]}`, {
         params: { coinName: cryptoID },
       });
 

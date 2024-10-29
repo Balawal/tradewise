@@ -14,7 +14,7 @@ const NewsScreen = ({ navigation }) => {
     const fetchNewsArticles = async () => {
       try {
         console.log('Fetching news articles from backend...');
-        const response = await axios.get('http://192.168.1.118:3000/api/news-articles');
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/news-articles`);
 
         const filteredArticles = response.data.news.filter(article => 
           article.images.length > 0 && article.symbols.length > 0

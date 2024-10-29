@@ -15,11 +15,11 @@ const LastPrice = ({ stockSymbol, containerStyle, textStyle }) => {
 
   const fetchLatestTradeData = async () => {
     try {
-      const response = await fetch(`http://192.168.1.118:3000/api/stock-fundamentals?symbol=${stockSymbol}`);
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/stock-fundamentals?symbol=${stockSymbol}`);
       const data = await response.json();
       setStockData(data);
 
-      const traderesponse = await fetch(`http://192.168.1.118:3000/api/latest-trade?symbols=${stockSymbol}`);
+      const traderesponse = await fetch(`${process.env.REACT_APP_BASE_URL}/latest-trade?symbols=${stockSymbol}`);
       const tradeData = await traderesponse.json();
       console.log('Initial API data:', tradeData);
       

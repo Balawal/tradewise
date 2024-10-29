@@ -39,32 +39,32 @@ const StockDetailScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const response = await fetch(`http://192.168.1.118:3000/api/stock-fundamentals?symbol=${stockSymbol}`);
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/stock-fundamentals?symbol=${stockSymbol}`);
         const data = await response.json();
         setStockData(data);
 
-        const traderesponse = await fetch(`http://192.168.1.118:3000/api/latest-trade?symbols=${stockSymbol}`);
+        const traderesponse = await fetch(`${process.env.REACT_APP_BASE_URL}/latest-trade?symbols=${stockSymbol}`);
         const tradeData = await traderesponse.json();
         setPrice(tradeData);
 
-        const maResponse = await fetch(`http://192.168.1.118:3000/api/stock-moving-averages?symbol=${stockSymbol}`);
+        const maResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/stock-moving-averages?symbol=${stockSymbol}`);
         const maData = await maResponse.json();
         setMovingAverages(maData);
 
-        const volResponse = await fetch(`http://192.168.1.118:3000/api/stock-volume?symbol=${stockSymbol}`);
+        const volResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/stock-volume?symbol=${stockSymbol}`);
         const volData = await volResponse.json();
         setVolume(volData);
 
-        const earningsResponse = await fetch(`http://192.168.1.118:3000/api/earnings-calendar?symbol=${stockSymbol}`);
+        const earningsResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/earnings-calendar?symbol=${stockSymbol}`);
         const earningsData = await earningsResponse.json();
         console.log('earning date:::', earningsData);
         setEarnings(earningsData);
 
-        const sentimentResponse = await fetch(`http://192.168.1.118:3000/api/stock-sentiment?symbol=${stockSymbol}`);
+        const sentimentResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/stock-sentiment?symbol=${stockSymbol}`);
         const sentimentData = await sentimentResponse.json();
         setSentiment(sentimentData);
 
-        const sixMResponse = await fetch(`http://192.168.1.118:3000/api/six-month-bars?symbols=${stockSymbol}`);
+        const sixMResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/six-month-bars?symbols=${stockSymbol}`);
         const sixMBarData = await sixMResponse.json();
 
         const sixMBarDataMap = {};

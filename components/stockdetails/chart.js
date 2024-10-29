@@ -44,15 +44,15 @@ const Chart = ({ stockSymbol, onColorChange, selectedTimeframe, setSelectedTimef
     setIsLoading(true);
     try {
       const endpointMap = {
-        '1D': '/api/latest-bars',
-        '1W': '/api/one-week-bars',
-        '1M': '/api/one-month-bars',
-        '6M': '/api/six-month-bars',
-        '1Y': '/api/one-year-bars',
-        '5Y': '/api/five-years-bars',
+        '1D': '/latest-bars',
+        '1W': '/one-week-bars',
+        '1M': '/one-month-bars',
+        '6M': '/six-month-bars',
+        '1Y': '/one-year-bars',
+        '5Y': '/five-years-bars',
       };
 
-      const response = await axios.get(`http://192.168.1.118:3000${endpointMap[timeframe]}`, {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}${endpointMap[timeframe]}`, {
         params: { symbols: stockSymbol },
       });
 

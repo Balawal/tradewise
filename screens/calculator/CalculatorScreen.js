@@ -36,11 +36,11 @@ const CalculatorScreen = ({ route, navigation }) => {
       return;
     }
   
-    let url = `http://192.168.1.118:3000/api/stock-calculator?symbols=${symbol}&start=${selectedDate}&investment=${investmentAmount}`;
+    let url = `${process.env.REACT_APP_BASE_URL}/stock-calculator?symbols=${symbol}&start=${selectedDate}&investment=${investmentAmount}`;
   
     // If the user toggles reinvestment, change the URL to the reinvestment endpoint
     if (reinvestDividends && reinvestmentAmount && periodicContribution) {
-      url = `http://192.168.1.118:3000/api/stock-calculator-reinvest?symbols=${symbol}&start=${selectedDate}&investment=${investmentAmount}&contribution=${reinvestmentAmount}&frequency=${periodicContribution}`;
+      url = `${process.env.REACT_APP_BASE_URL}/stock-calculator-reinvest?symbols=${symbol}&start=${selectedDate}&investment=${investmentAmount}&contribution=${reinvestmentAmount}&frequency=${periodicContribution}`;
     }
 
     setIsLoading(true);

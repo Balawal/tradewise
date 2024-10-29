@@ -34,8 +34,8 @@ const SearchStocks = ({ focusInput }) => {
 		if (searchTerm.trim() === "") return;
 
 		try {
-			const stockResponse = fetch(`http://192.168.1.118:3000/api/search-query?keywords=${searchTerm}`);
-			const cryptoResponse = fetch(`http://192.168.1.118:3000/api/search-query-crypto?query=${searchTerm}`);
+			const stockResponse = fetch(`${process.env.REACT_APP_BASE_URL}/search-query?keywords=${searchTerm}`);
+			const cryptoResponse = fetch(`${process.env.REACT_APP_BASE_URL}/search-query-crypto?query=${searchTerm}`);
 
 			const [stocksData, cryptoData] = await Promise.all([stockResponse, cryptoResponse]);
 			const stockResults = await stocksData.json();

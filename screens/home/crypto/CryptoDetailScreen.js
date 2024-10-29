@@ -37,11 +37,11 @@ const CryptoDetailScreen = ({ route }) => {
   useEffect(() => {
     const fetchCryptoData = async () => {
       try {
-        const response = await fetch(`http://192.168.1.118:3000/api/crypto-coin-data?coinName=${cryptoID}`);
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/crypto-coin-data?coinName=${cryptoID}`);
         const data = await response.json();
         setCryptoData(data);
 
-        const newsResponse = await fetch(`http://192.168.1.118:3000/api/news-crypto?symbols=${cryptoSymbol}`);
+        const newsResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/news-crypto?symbols=${cryptoSymbol}`);
         const newsData = await newsResponse.json();
         setNewsData(newsData);
 

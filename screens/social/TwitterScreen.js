@@ -42,11 +42,11 @@ const TwitterScreen = () => {
     // Function to fetch the latest tweet file and its data
     const fetchTweets = async () => {
       try {
-        const response = await fetch('http://192.168.1.118:3000/api/scrape-tweets');
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/scrape-tweets`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         // Fetch the latest tweet file
-        const latestFileResponse = await fetch('http://192.168.1.118:3000/api/latest-tweet-file');
+        const latestFileResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/latest-tweet-file`);
         if (!latestFileResponse.ok) {
           throw new Error('Failed to fetch latest tweet file');
         }
@@ -58,7 +58,7 @@ const TwitterScreen = () => {
         }
 
         // Fetch the tweets from the latest file
-        const tweetsResponse = await fetch(`http://192.168.1.118:3000/api/get-tweets?filename=${filename}`);
+        const tweetsResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/get-tweets?filename=${filename}`);
         if (!tweetsResponse.ok) {
           throw new Error('Failed to fetch tweets');
         }
@@ -89,7 +89,7 @@ const TwitterScreen = () => {
         console.error(err);
       // In case of any error, attempt to load the backup tweets
       try {
-        const backupTweetsResponse = await fetch('http://192.168.1.118:3000/api/get-tweets?filename=backup_tweets.csv');
+        const backupTweetsResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/get-tweets?filename=backup_tweets.csv`);
         if (!backupTweetsResponse.ok) throw new Error('Failed to fetch backup tweets');
 
         const backupTweetsData = await backupTweetsResponse.json();

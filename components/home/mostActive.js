@@ -14,7 +14,7 @@ const MostActive = () => {
 		const fetchMostActive = async () => {
 			try {
 				console.log("fetching most active stocks");
-				const response = await fetch(`http://192.168.1.118:3000/api/most-active`);
+				const response = await fetch(`${process.env.REACT_APP_BASE_URL}/most-active`);
 				if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 				const data = await response.json();
 
@@ -26,7 +26,7 @@ const MostActive = () => {
 				const symbolsString = symbols.join(",");
 
 				console.log("fetching historical bars");
-				const barsResponse = await fetch(`http://192.168.1.118:3000/api/historical-bars?symbols=${symbolsString}`);
+				const barsResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/historical-bars?symbols=${symbolsString}`);
 				if (!barsResponse.ok) throw new Error(`HTTP error! status: ${barsResponse.status}`);
 				const barsData = await barsResponse.json();
 
@@ -50,7 +50,7 @@ const MostActive = () => {
 		const fetchMostActiveCrypto = async () => {
 			try {
 				console.log("fetching most active crypto");
-				const responseCrypto = await fetch(`http://192.168.1.118:3000/api/top-coins`);
+				const responseCrypto = await fetch(`${process.env.REACT_APP_BASE_URL}/api/top-coins`);
 				if (!responseCrypto.ok) throw new Error(`HTTP error! status: ${responseCrypto.status}`);
 				const dataCrypto = await responseCrypto.json();
 				console.log(dataCrypto);
@@ -63,7 +63,7 @@ const MostActive = () => {
 				const symbolsStringCrypto = symbolsCrypto.join(",");
 
 				console.log("fetching historical bars");
-				const barsResponseCrypto = await fetch(`http://192.168.1.118:3000/api/historical-bars-crypto?symbols=${symbolsStringCrypto}`);
+				const barsResponseCrypto = await fetch(`${process.env.REACT_APP_BASE_URL}/api/historical-bars-crypto?symbols=${symbolsStringCrypto}`);
 				if (!barsResponseCrypto.ok) throw new Error(`HTTP error! status: ${barsResponseCrypto.status}`);
 				const barsDataCrypto = await barsResponseCrypto.json();
 

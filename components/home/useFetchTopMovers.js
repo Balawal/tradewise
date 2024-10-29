@@ -12,7 +12,7 @@ export default function useFetchTopMovers() {
 			try {
 				console.log("Fetching top movers stocks...");
 
-				const response = await fetch("http://192.168.1.118:3000/api/top-movers");
+				const response = await fetch(`${process.env.REACT_APP_BASE_URL}/top-movers`);
 				if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 				const data = await response.json();
 
@@ -22,7 +22,7 @@ export default function useFetchTopMovers() {
 				const symbols = symbolsArray.join(",");
 
 				console.log("Fetching historical bars...");
-				const barsResponse = await fetch(`http://192.168.1.118:3000/api/historical-bars?symbols=${symbols}`);
+				const barsResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/historical-bars?symbols=${symbols}`);
 				if (!barsResponse.ok) throw new Error(`HTTP error! status: ${barsResponse.status}`);
 				const barsData = await barsResponse.json();
 
@@ -45,7 +45,7 @@ export default function useFetchTopMovers() {
 			try {
 				console.log("Fetching top movers crypto...");
 
-				const responseCrypto = await fetch("http://192.168.1.118:3000/api/top-movers-crypto");
+				const responseCrypto = await fetch(`${process.env.REACT_APP_BASE_URL}/top-movers-crypto`);
 				if (!responseCrypto.ok) throw new Error(`HTTP error! status: ${responseCrypto.status}`);
 				const dataCrypto = await responseCrypto.json();
 
@@ -55,7 +55,7 @@ export default function useFetchTopMovers() {
 				const symbolsCrypto = symbolsArrayCrypto.join(",");
 
 				console.log("Fetching historical bars crypto...");
-				const barsResponseCrypto = await fetch(`http://192.168.1.118:3000/api/historical-bars-crypto?symbols=${symbolsCrypto}`);
+				const barsResponseCrypto = await fetch(`${process.env.REACT_APP_BASE_URL}/historical-bars-crypto?symbols=${symbolsCrypto}`);
 				if (!barsResponseCrypto.ok) throw new Error(`HTTP error! status: ${barsResponseCrypto.status}`);
 				const barsDataCrypto = await barsResponseCrypto.json();
 
