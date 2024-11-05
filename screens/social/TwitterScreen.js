@@ -1,125 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image  } from 'react-native';
-import { MaterialIndicator } from 'react-native-indicators';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { EvilIcons } from '@expo/vector-icons';
-
-const extractUsername = (url) => {
-  const parts = url.split('/');
-  return parts[parts.length - 1];
-};
-
-const parseTweetStats = (stats) => {
-  //console.log('Raw Stats Input:', stats);
-  
-  // Remove leading/trailing spaces and collapse multiple spaces into a single space
-  const cleanedStats = stats.trim().replace(/\s+/g, ' ');
-  //console.log('Cleaned Stats:', cleanedStats); // Log the cleaned stats string
-
-  // Split the cleaned stats string into an array based on spaces, then convert each item to a number
-  const statsArray = cleanedStats.split(' ').map(item => {
-    const number = parseInt(item.replace(/,/g, ''), 10);
-    return isNaN(number) ? 'N/A' : number;
-  });
-  
-  //console.log('Extracted Stats Array:', statsArray); // Log the extracted array of numbers
-
-  // Return an object with the extracted stats
-  return {
-    comments: statsArray[1] || '0',
-    retweets: statsArray[2] || '0',
-    quotes: statsArray[3] || '0',
-    likes: statsArray[4] || '0',
-  };
-};
+import { LoadingIndicator } from '../../styles/components/loadingIndicator';
+import { useFetchTweets } from '../../hooks/social/useFetchTweets';
+import { extractUsername } from '../../utils/utils';
+import { EmptyMessage } from '../../styles/components/emptyMessage';
+import { twitterScreenStyles as styles } from '../../styles/socialStyles';
 
 const TwitterScreen = () => {
-  const [tweets, setTweets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const DEFAULT_AVATAR = 'https://pbs.twimg.com/profile_images/899127121670541312/ZVBuToeP_bigger.jpg';
-    // Function to fetch the latest tweet file and its data
-    const fetchTweets = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/scrape-tweets`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        // Fetch the latest tweet file
-        const latestFileResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/latest-tweet-file`);
-        if (!latestFileResponse.ok) {
-          throw new Error('Failed to fetch latest tweet file');
-        }
-
-        const latestFileData = await latestFileResponse.json();
-        const filename = latestFileData.filename || 'backup_tweets.csv';
-        if (!latestFileData.filename) {
-          throw new Error('No filename found');
-        }
-
-        // Fetch the tweets from the latest file
-        const tweetsResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/get-tweets?filename=${filename}`);
-        if (!tweetsResponse.ok) {
-          throw new Error('Failed to fetch tweets');
-        }
-
-        const tweetsData = await tweetsResponse.json();
-        // console.log('Tweets Data:', tweetsData); 
-
-        const parsedTweets = tweetsData.map(tweet => {
-          const parsedStats = parseTweetStats(tweet.stats);
-          //console.log('Parsed Tweet Stats:', parsedStats); // Log the parsed stats
-          const avatar = tweet.avatar.trim();
-          //console.log('profile picture: ', avatar);
-          const fullname = tweet.fullname.trim();
-          //console.log('user fullname: ', fullname);
-
-          console.log(avatar);
-          console.log(fullname);
-          return {
-            ...tweet,
-            stats: parsedStats,
-            avatar,
-            fullname
-          };
-        });
-
-        setTweets(parsedTweets);
-      } catch (err) {
-        console.error(err);
-      // In case of any error, attempt to load the backup tweets
-      try {
-        const backupTweetsResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/get-tweets?filename=backup_tweets.csv`);
-        if (!backupTweetsResponse.ok) throw new Error('Failed to fetch backup tweets');
-
-        const backupTweetsData = await backupTweetsResponse.json();
-        const parsedBackupTweets = backupTweetsData.map(tweet => {
-          const parsedStats = parseTweetStats(tweet.stats);
-          const avatar = DEFAULT_AVATAR;
-          const fullname = tweet.fullname.trim();
-
-          console.log(avatar);
-          console.log(fullname);
-          return {
-            ...tweet,
-            stats: parsedStats,
-            avatar,
-            fullname
-          };
-        });
-        setTweets(parsedBackupTweets); // Set backup tweets on error
-      } catch (backupError) {
-        console.error('Failed to load backup tweets:', backupError.message);
-        setError(backupError.message); // Set error if even backup fails
-      }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTweets();
-  }, []); // Empty dependency array means this effect runs once when the component mounts
-
+  const { tweets, loading, error } = useFetchTweets();
   const [expandedTweetIndex, setExpandedTweetIndex] = useState(null);
 
   const handleExpandPress = (index) => {
@@ -127,13 +16,9 @@ const TwitterScreen = () => {
   };
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <MaterialIndicator color="white" />
-      </View>
-    );
+    return <LoadingIndicator color="white" />;
   }
-  if (error) return <Text style={styles.noTweets}>No tweets available.</Text>;
+  if (error) return <EmptyMessage message="Tweets aren't displaying. Please try again later." />;
 
   return (
     <ScrollView style={styles.container}>
@@ -189,111 +74,10 @@ const TwitterScreen = () => {
           </View>
         ))
       ) : (
-        <Text style={styles.noTweets}>No tweets available.</Text>
+        <EmptyMessage message="Tweets aren't displaying. Please try again later." />
       )}
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#000000',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000000',
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20, // Makes the image circular
-    marginRight: 8,
-  },
-  fullnameAndUsername: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  fullname: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-    marginRight: 4, // Space between fullname and username
-  },
-  username: {
-    color: '#888888',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginLeft: 8,
-  },
-  tweetContainer: {
-    marginBottom: 8,
-    paddingVertical: 0,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  time: {
-    color: '#888888',
-  },
-  contentContainer: {
-    marginTop: 4,
-    marginBottom: 10,
-  },
-  content: {
-    color: '#ffffff',
-  },
-  readMoreButton: {
-    marginTop: 4,
-  },
-  readMoreText: {
-    color: '#1DA1F2', 
-    fontWeight: 'bold',
-    fontSize: 10
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  statsItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statsText: {
-    marginLeft: 5,
-    color: '#888888',
-    fontSize: 13,
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  noTweets: {
-    color: '#000000',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#111',
-    marginVertical: 15,
-  },
-});
-
 
 export default TwitterScreen;

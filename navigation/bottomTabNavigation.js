@@ -1,23 +1,17 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons, Feather, FontAwesome5 } from '@expo/vector-icons'; // Import icons from Expo
-
+import { Ionicons, Feather, FontAwesome5 } from '@expo/vector-icons'; 
 import HomeScreen from '../screens/home/HomeScreen';
-import SettingsScreen from '../screens/settings/SettingsScreen';
-import TwitterScreen from '../screens/social/TwitterScreen';
-import NewsScreen from '../screens/social/news/NewsScreen';
 import SocialScreen from '../screens/social/SocialScreen';
-import WatchListScreen from '../screens/watchlist/WatchListScreen';
 import WatchListStackNavigator from './watchListCalculator';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import StockDetailScreen from '../screens/home/stocks/StockDetailScreen';
-import CryptoDetailScreen from '../screens/home/crypto/CryptoDetailScreen';
+import StockDetailScreen from '../screens/home/StockDetailScreen';
+import CryptoDetailScreen from '../screens/home/CryptoDetailScreen';
 import SettingsStackNavigator from './settingsNavigation';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 
-// Stack Navigator for Home and Detail Screens
 const HomeStackNavigator = () => {
     return (
         <HomeStack.Navigator>
@@ -50,9 +44,6 @@ const BottomTabNavigation = () => {
                     } else if (route.name === 'Cash') {
                         iconName = 'wallet';
                         return <FontAwesome5 name={iconName} size={24} color={color} />;
-                    // } else if (route.name === 'Notifications') {
-                    //     iconName = 'bell';
-                    //     return <FontAwesome5 name={iconName} size={24} color={color} />;
                     } else if (route.name === 'Social') {
                         return <Ionicons name="chatbox-ellipses-sharp" size={24} color={color} />;
                     } else if (route.name === 'Settings') {

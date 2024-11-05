@@ -1,24 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, TouchableOpacity} from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useNavigation } from '@react-navigation/native';
 import { MotiView } from 'moti';
-import { Easing } from 'react-native-reanimated';
-
-const formatNum = (num) => {
-  if (num >= 1e12) {
-    return (num / 1e12).toFixed(1) + 'T';  // Convert to trillions
-  } else if (num >= 1e9) {
-    return (num / 1e9).toFixed(1) + 'B';   // Convert to billions
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';   // Convert to millions
-  } else if (num >= 1e3) {
-    return (num / 1e3).toFixed(1) + 'K'; 
-  } else {
-    return num.toString();  // Return as is if less than 1 million
-  }
-};
-
+import { formatNum } from '../../utils/utils';
+import { cardsStyles as styles } from '../../styles/homeStyles';
 
 export const StockCards = ({ stocks, barData, displayVolume }) => {
   const navigation = useNavigation();
@@ -30,7 +16,6 @@ export const StockCards = ({ stocks, barData, displayVolume }) => {
           key={stock.symbol}
           style={styles.card}
           onPress={() => {
-            // Navigate to the StockDetail screen and pass the stock symbol
             navigation.navigate('StockDetail', { stockSymbol: stock.symbol });
           }}
         >
@@ -75,7 +60,7 @@ export const StockCards = ({ stocks, barData, displayVolume }) => {
               from={{ translateY: -10, opacity: 0 }}
               animate={{ translateY: 0, opacity: 1 }}
               transition={{ type: 'timing', duration: 300 }}
-              key={stock.price}  // Ensure animation re-runs on price change
+              key={stock.price} 
             >
             <Text style={[styles.cardPrice, { color: stock.isGainer ? 'green' : 'red' }]}>
             {displayVolume ? `${formatNum(stock.volume)}` : `$${stock.price ? stock.price.toFixed(2) : 'N/A'}`}
@@ -104,7 +89,6 @@ export const CryptoCards = ({ cryptos, barDataCrypto, displayVolume }) => {
         const cryptoID = crypto.symbol.split('/')[0];
         console.log('symbol:::', crypto.symbol);
         console.log('ID:::', cryptoID);
-        // Navigate to the CryptoDetail screen and pass the stock symbol
         navigation.navigate('CryptoDetail', { cryptoID, cryptoSymbol: cryptoID });
       }}
     >
@@ -162,147 +146,5 @@ export const CryptoCards = ({ cryptos, barDataCrypto, displayVolume }) => {
       </TouchableOpacity>
     ))}
     </ScrollView>
-  );
-    
-  };
-
-const styles = StyleSheet.create({
-    header: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginVertical: 12,
-    },
-    container: {
-        flexGrow: 1,
-        backgroundColor: '#000000',
-        padding: 20,
-    },
-    contentContainer: {
-        flexGrow: 1,
-        backgroundColor: '#000000',
-    },
-    cardsWrapper: {
-        flexDirection: 'row',
-    },
-    card: {
-        backgroundColor: '#000000',
-        borderRadius: 8,
-        padding: 10,
-        marginRight: 15,
-        width: 150,
-        height: 180, 
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        marginBottom: 15
-    },
-    chartWrapper: {
-        width: '50%',
-        height: 80, 
-        marginBottom: 10,
-    },
-    chart: {
-        marginVertical: 2,
-        borderRadius: 0,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    cardSymbol: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        marginLeft: 10,
-        marginTop: 10
-    },
-    cardPrice: {
-        fontSize: 20,
-        marginBottom: 5,
-        fontWeight: 'bold',
-        marginLeft: 10,
-    },
-    cardPercent: {
-        fontSize: 11,
-        fontWeight: 'bold',
-        marginLeft: 10,
-    },
-    header: {
-        fontSize: 24,
-        color: 'white',
-        fontWeight: 'bold',
-        marginBottom: 5,
-        marginTop: 40
-    },
-    subHeader: {
-        fontSize: 14,
-        color: 'grey',
-        marginBottom: 20,
-    },
-    handleIndicator: {
-        backgroundColor: '#888', // Set the handle color to gray
-        width: 50, // Adjust the width if needed
-        height: 5,  // Adjust the height if needed
-        borderRadius: 5,
-    },
-    searchInputWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#313133', // Gray background for the search bar
-        borderRadius: 10,
-        padding: 8,
-        marginBottom: 24
-    },
-    searchIconBar: {
-        marginRight: 10, // Space between the icon and the input
-    },
-    searchIcon: {
-        position: 'absolute',
-        top: 63, 
-        right: 20,
-        zIndex: 1,
-    },
-    bottomSheetBackground: {
-        borderRadius: 30,
-        backgroundColor: '#080813', // Black background for the bottom sheet
-    },
-    searchContainer: {
-        backgroundColor: '#080813',
-        padding: 18,
-        flexDirection: 'column',
-        flex: 1,
-    },
-    searchInput: {
-        flex: 1,
-        fontSize: 14,
-        color: '#fff',  // Set text color to white
-    },
-    resultsContainer: {
-        //marginTop: 10,
-        flex: 1,
-    },
-    resultItem: {
-        //padding: 5,
-    },
-    resultSymbol: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: 'white',
-        marginBottom: 5
-    },
-    resultName: {
-        fontSize: 14,
-        color: '#888',
-    },
-    clearButton: {
-        marginLeft: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    separator: {
-        height: 1,
-        backgroundColor: '#111',
-        marginVertical: 20,
-    },
-    noResultsText: {
-        color: 'white',
-        textAlign: 'center',
-        fontWeight: 'bold'
-    }
-});
+  ); 
+};

@@ -1,8 +1,8 @@
 import React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler'; // Import GestureHandlerRootView
+import { GestureHandlerRootView } from 'react-native-gesture-handler'; 
 import AppNavigation from './navigation/appNavigation';
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import 'react-native-reanimated';  // Make sure it's imported correctly
+import 'react-native-reanimated';  
 import 'react-native-gesture-handler';
 
 

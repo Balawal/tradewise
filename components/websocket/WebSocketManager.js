@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
-require('dotenv').config();
+import { ALPACA_API_KEY, ALPACA_API_SECRET } from '@env';
 
-const ALPACA_API_KEY = process.env.ALPACA_API_KEY;
-const ALPACA_API_SECRET = process.env.ALPACA_API_SECRET;
 
 let stockWebSocketInstance = null;
 let cryptoWebSocketInstance = null;
 let stockSubscribers = [];
 let cryptoSubscribers = [];
 
-// Utility function to handle WebSocket messages
 const handleWebSocketMessage = (data, subscribers) => {
   if (data.T === 'error') {
     console.error('WebSocket error:', data.msg);
@@ -173,7 +170,6 @@ export const useCryptoWebSocket = (onMessageCallback) => {
   
 };
 
-// Utility functions to manage subscriptions
 export const subscribeToStockUpdates = (symbols) => {
   if (!stockWebSocketInstance) {
     console.log('Stock WebSocket instance is null. Cannot subscribe yet.');

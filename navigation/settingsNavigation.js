@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator();
 const SettingsStackNavigator = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="SettingsMain" component={SettingsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: false }} />
             <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: false }} />
         </Stack.Navigator>

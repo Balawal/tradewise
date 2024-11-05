@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { datePickerStyles as styles } from '../../styles/calculatorStyles';
 
 const DatePicker = ({ onDateChange, selectedDate }) => {
   const [date, setDate] = useState(new Date());
@@ -12,11 +13,9 @@ const DatePicker = ({ onDateChange, selectedDate }) => {
     setShow(false);
     setDate(currentDate);
     
-    // Format date to display in the TextInput (MM/DD/YYYY)
     const formattedDate = currentDate.toLocaleDateString();
     const formattedDateServer = currentDate.toISOString().split('T')[0];
 
-    // Pass the formatted date back to parent (CalculatorScreen)
     onDateChange(formattedDateServer);
   };
 
@@ -31,10 +30,10 @@ const DatePicker = ({ onDateChange, selectedDate }) => {
         <View pointerEvents="none">
           <TextInput
             style={styles.input}
-            value={selectedDate} // Use selectedDate passed from parent
+            value={selectedDate} 
             placeholder="YYYY-MM-DD"
-            placeholderTextColor="#e5d4d4"  // Matches the investment amount placeholder
-            editable={false}  // Make it read-only
+            placeholderTextColor="#e5d4d4"  
+            editable={false} 
           />
         </View>
       </TouchableOpacity>
@@ -50,22 +49,5 @@ const DatePicker = ({ onDateChange, selectedDate }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 0,
-  },
-  input: {
-    backgroundColor: '#312c35',  // Matches investment amount background color
-    borderColor: '#302938',  
-    color: 'white',  // Matches the text color
-    borderRadius: 10,  // Same border radius
-    height: 56,  // Same height
-    paddingHorizontal: 16,  // Matches padding
-    fontSize: 16,  // Same font size
-    borderWidth: 0,  // No border
-    placeholderTextColor: '#fff',  // Matches placeholder color
-  },
-});
 
 export default DatePicker;

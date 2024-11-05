@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback} from 'react';
+import { useEffect, useRef } from 'react';
 import { subscribeToStockUpdates, unsubscribeFromStockUpdates, useStockWebSocket, useCryptoWebSocket, subscribeToCryptoUpdates, unsubscribeFromCryptoUpdates } from '../../components/websocket/WebSocketManager';
 
 
@@ -7,7 +7,6 @@ const TopMoversStreaming = (marketData, setMarketData, marketDataCrypto, setMark
     const cryptoSymbolsRef = useRef([]);
 
     useEffect(() => {
-        //console.log('Market Data:', marketData);
         const symbols = marketData.gainers.concat(marketData.losers).map(stock => stock.symbol);
         stockSymbolsRef.current = symbols;
         subscribeToStockUpdates(symbols.join(','));
@@ -18,7 +17,6 @@ const TopMoversStreaming = (marketData, setMarketData, marketDataCrypto, setMark
   }, [marketData]);
   
     useEffect(() => {
-        //console.log('Market Data Crypto:', marketDataCrypto);
         const symbolsCrypto = marketDataCrypto.gainers.concat(marketDataCrypto.losers).map(crypto => crypto.symbol);
         cryptoSymbolsRef.current = symbolsCrypto;
         subscribeToCryptoUpdates(symbolsCrypto.join(','));

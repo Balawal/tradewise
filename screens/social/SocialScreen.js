@@ -2,7 +2,6 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import NewsScreen from './news/NewsScreen';
 import TwitterScreen from './TwitterScreen';
-import NewsDetailScreen from './news/NewsDetailScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
@@ -17,22 +16,22 @@ const SocialScreen = ({ navigation }) => {
           tabBarInactiveTintColor: '#888',
           tabBarStyle: { 
             backgroundColor: '#000',
-            paddingTop: 32,  // Adjust this value to move the tabs lower
-            height: 80,  // Adjust height as necessary
+            paddingTop: 32,  
+            height: 80,  
           },
           tabBarIndicatorStyle: { backgroundColor: '#4d3465' },
           tabBarIcon: ({ color }) => {
             let iconName;
 
             if (route.name === 'News') {
-              iconName = 'newspaper'; // FontAwesome icon name for news
+              iconName = 'newspaper'; 
             } else if (route.name === 'Twitter') {
-              iconName = 'x-twitter'; // FontAwesome icon name for Twitter
+              iconName = 'x-twitter'; 
             }
 
             return <FontAwesome6 name={iconName} size={24} color={color} />;
           },
-          tabBarShowLabel: false, // Hide the label and show only the icon
+          tabBarShowLabel: false, 
         })}
       >
         <Tab.Screen name="News">

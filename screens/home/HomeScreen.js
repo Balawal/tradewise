@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet} from 'react-native';
-import MostActive from '../../components/home/mostActive';
+import { View } from 'react-native';
 import TopMovers from '../../components/home/topMovers';
+import { homeScreenStyles as styles } from '../../styles/homeStyles';
 
 const HomeScreen = () => {
   return (
@@ -10,15 +10,5 @@ const HomeScreen = () => {
       </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    flex: 1,
-    backgroundColor: '#000000', 
-    zIndex: 1000,
-
-  },
-});
 
 export default HomeScreen;

@@ -1,18 +1,16 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import HomeScreen from '../screens/home/HomeScreen';
 import LoginScreen from '../screens/welcome/LoginScreen';
 import SignUpScreen from '../screens/welcome/SignUpScreen';
 import WelcomeScreen from '../screens/welcome/WelcomeScreen';
 import LottieView from 'lottie-react-native';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../hooks/firebase/useAuth';
 import BottomTabNavigation from './bottomTabNavigation';
-import { useStockWebSocket, closeStockWebSocket, useCryptoWebSocket, closeCryptoWebSocket, useLatestTradeStocksWebSocket, closeLatestTradeStocksWebSocket } from '../components/websocket/WebSocketManager';
 import NewsDetailScreen from '../screens/social/news/NewsDetailScreen';
-import StockDetailScreen from '../screens/home/stocks/StockDetailScreen';
-import CryptoDetailScreen from '../screens/home/crypto/CryptoDetailScreen';
+import StockDetailScreen from '../screens/home/StockDetailScreen';
+import CryptoDetailScreen from '../screens/home/CryptoDetailScreen';
 import WatchListScreen from '../screens/watchlist/WatchListScreen';
 import CalculatorScreen from '../screens/calculator/CalculatorScreen';
 import DeleteAccountScreen from '../screens/settings/DeleteAccountScreen';
@@ -51,7 +49,6 @@ export default function AppNavigation() {
     return (
       <NavigationContainer>
           {user ? (
-              // If user is authenticated, show the BottomTabNavigation
           <Stack.Navigator>
             <Stack.Screen name="Done" component={BottomTabNavigation} options={{ headerShown: false }}/>
             <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerStyle: {backgroundColor: '#000000', }, headerTintColor: '#ffffff', }} />
@@ -63,7 +60,6 @@ export default function AppNavigation() {
             <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
           ) : (
-              // If user is not authenticated, show the Welcome/Login/SignUp screens
               <Stack.Navigator initialRouteName='Welcome'>
                   <Stack.Screen name="Welcome" options={{ headerShown: false }} component={WelcomeScreen} />
                   <Stack.Screen name="SignUp" options={{ headerShown: false }} component={SignUpScreen} />
@@ -82,14 +78,6 @@ export default function AppNavigation() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#ad93c8',
-    },
-    animation: {
-      width: 250,
-      height: 250,
-    },
+    container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ad93c8', },
+    animation: { width: 250, height: 250, },
   });
