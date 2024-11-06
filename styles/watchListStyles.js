@@ -5,7 +5,7 @@ export const watchListItemStyles = StyleSheet.create({
     card: { flexDirection: 'row', justifyContent: 'space-between',  alignItems: 'center', padding: 8, marginHorizontal: 15, borderRadius: 8, },
     info: { flexDirection: 'column', },
     symbol: { color: 'white', fontSize: 20, },
-    name: { color: 'grey', fontSize: 13, },
+    name: { color: '#ab9db8', fontSize: 13, },
     price: { color: 'white', fontSize: 16, },
     priceContainer: { alignItems: 'flex-end', width: 100, },
     separator: { height: 1, backgroundColor: '#111', marginVertical: 10 },
