@@ -1967,7 +1967,7 @@ app.get('/api/scrape-tweets', async (req, res) => {
       //'https://xcancel.com/AdamMancini4',
       //'https://nitter.poast.org/AdamMancini4',
       'https://nitter.lucabased.xyz/AdamMancini4',
-      'https://nitter.lucabased.xyz/InvestorsLive',
+      //'https://nitter.lucabased.xyz/InvestorsLive',
       // 'https://nitter.lucabased.xyz/RedDogT3',
     ];
 
