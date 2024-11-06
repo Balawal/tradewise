@@ -1500,6 +1500,8 @@ PODS:
     - React-utils (= 0.74.5)
   - RNCalendarEvents (2.2.0):
     - React
+  - RNCAsyncStorage (1.23.1):
+    - React-Core
   - RNDateTimePicker (8.2.0):
     - React-Core
   - RNGestureHandler (2.16.2):
@@ -1672,6 +1674,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNCalendarEvents (from `../node_modules/react-native-calendar-events`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
@@ -1840,6 +1843,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCalendarEvents:
     :path: "../node_modules/react-native-calendar-events"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNGestureHandler:
@@ -1937,6 +1942,7 @@ SPEC CHECKSUMS:
   React-utils: f242eb7e7889419d979ca0e1c02ccc0ea6e43b29
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
   RNCalendarEvents: 7e65eb4a94f53c1744d1e275f7fafcfaa619f7a3
+  RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNDateTimePicker: 40ffda97d071a98a10fdca4fa97e3977102ccd14
   RNGestureHandler: 2282cfbcf86c360d29f44ace393203afd5c6cff7
   RNGoogleSignin: 9e68b9bcc3888219357924e32ee563624745647d
