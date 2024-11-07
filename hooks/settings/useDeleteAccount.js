@@ -20,7 +20,7 @@ const useDeleteAccount = () => {
 
         try {
             await deleteUser(user);
-            Alert.alert('Success', 'Account deleted successfully.');
+            Alert.alert('Success!', 'Account deleted successfully.');
             console.log("User deleted successfully.");
             navigation.navigate('Welcome');
         } catch (error) {

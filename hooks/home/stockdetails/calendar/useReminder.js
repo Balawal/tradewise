@@ -21,9 +21,9 @@ export default function  useReminder(calendarId, earningsDate, stockSymbol){
         timeZone: 'GMT',
       });
 
-      Alert.alert('Success', 'Reminder added to your calendar.');
+      Alert.alert('Success!', 'Reminder added to your calendar.');
     } catch (error) {
-      Alert.alert('Error', 'Unable to add event to calendar.');
+      Alert.alert('Error', 'Unable to add event to your calendar.');
       console.error(error);
     }
   };

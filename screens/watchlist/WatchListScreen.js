@@ -19,7 +19,7 @@ const WatchlistScreen = () => {
             console.log('Navigating to Calculator with:', item.symbol, item.name);
             navigation.navigate('Calculator', { symbol: item.symbol, name: item.name });
           } else {
-            Alert.alert('Oops', 'The calculator is not available for cryptos yet. Keep checking back for more updates!');
+            Alert.alert('Oops!', 'The calculator is not available for cryptos yet. Keep checking back for more updates!');
           }
         }}
       />

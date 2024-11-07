@@ -35,7 +35,7 @@ const useChangePassword = () => {
             console.log('Reauthentication successful');
 
             await updatePassword(user, newPassword);
-            Alert.alert('Success', 'Password updated successfully.');
+            Alert.alert('Success!', 'Password updated successfully.');
             navigation.goBack();
         } catch (error) {
             console.error('Error updating password:', error);
