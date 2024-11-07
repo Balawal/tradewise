@@ -1,6 +1,6 @@
-import {View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from '../screens/welcome/LoginScreen';
 import SignUpScreen from '../screens/welcome/SignUpScreen';

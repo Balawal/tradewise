@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useNavigation } from '@react-navigation/native';
 import { MotiView } from 'moti';
