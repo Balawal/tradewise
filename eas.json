@@ -13,9 +13,26 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "env": {
+        "CRYPTO_COMPARE_API_KEY": "process.env.CRYPTO_COMPARE_API_KEY",
+        "COINGECKO_API_KEY": "process.env.COINGECKO_API_KEY",
+        "FIN_MODEL_API_KEY": "process.env.FIN_MODEL_API_KEY",
+        "ALPHA_VANTAGE_API_KEY": "process.env.ALPHA_VANTAGE_API_KEY",
+        "ALPACA_API_KEY": "process.env.ALPACA_API_KEY",
+        "ALPACA_API_SECRET": "process.env.ALPACA_API_SECRET",
+        "REACT_APP_BASE_URL": "process.env.REACT_APP_BASE_URL",
+        "WEB_CLIENT_ID": "process.env.WEB_CLIENT_ID"
+      }
+    }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios":{
+        "appleId": "balawalchaudry@icloud.com",
+        "ascAppId": "6737919391",
+        "appleTeamId": "H84HQXU8W8"
+      }
+    }
   }
 }

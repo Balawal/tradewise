@@ -1,17 +1,21 @@
 {
   "expo": {
     "name": "Tradewise",
-    "slug": "Tradewise",
-    "version": "1.0.0",
+    "slug": "tradewise",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icons/tradewise_logo.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tradewise.tradewise",
+      "buildNumber": "3",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "LSApplicationQueriesSchemes": ["mailto"]
+        "LSApplicationQueriesSchemes": ["mailto"],
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
     },
     "android": {

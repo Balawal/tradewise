@@ -42,7 +42,7 @@ const TopMovers = () => {
 		<BottomSheetModalProvider>
 		<View style={{ flex: 1, backgroundColor: "#000000" }}>
 			<ScrollView contentContainerStyle={styles.contentContainer}>
-				<TouchableOpacity style={[{ marginTop: 50, marginLeft: 385, flex: 1 }]} onPress={handlePresentModal}>
+				<TouchableOpacity style={[{ marginTop: 50, marginLeft: 380, flex: 1 }]} onPress={handlePresentModal}>
 					<Icon name="search" size={24} color="white" />
 				</TouchableOpacity>
 				<View>
