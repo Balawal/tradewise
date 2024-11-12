@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#1f1f1f',
         fontWeight: '500',
-        marginLeft: 12, // space between icon and text
+        marginLeft: 12, 
     },
     icon: {
         width: 20,
