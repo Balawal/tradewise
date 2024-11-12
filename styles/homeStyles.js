@@ -92,7 +92,7 @@ export const stockDetailScreenStyles = StyleSheet.create({
     header: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 35, },
     goBack: { paddingTop: 35, },
     container: { flex: 1, padding: 20, backgroundColor: '#000', },
-    name: { fontSize: 25, marginVertical: 8, color: 'white', fontWeight: 'bold', marginTop: 10, marginBottom: 8, },
+    name: { fontSize: 25, marginVertical: 8, color: 'white', fontWeight: 'bold', marginTop: 15, marginBottom: 8, },
     keystats: { fontSize: 23, marginVertical: 10, color: 'white', fontWeight: 'bold', },
     sentiment: { fontSize: 23, marginVertical: 20, color: 'white', fontWeight: 'bold', },
     dividend: { fontSize: 23, marginVertical: 20, color: 'white', fontWeight: 'bold', },

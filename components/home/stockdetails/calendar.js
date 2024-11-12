@@ -11,7 +11,7 @@ const EarningsCalendar = ({ earningsDate, stockSymbol, color }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const openModal = async () => {
-    await getOrCreateDefaultCalendar();  // Ensure calendar exists when opening modal
+    await getOrCreateDefaultCalendar();
     setModalVisible(true);
   };
 

@@ -42,4 +42,5 @@ export const settingsScreenStyles = StyleSheet.create({
     logoutContainer: { marginTop: 145, padding: 16, },
     logoutButton: { backgroundColor: '#000', borderRadius: 20, paddingVertical: 8, alignItems: 'center', borderWidth: 2, borderColor: '#ad93c8', },
     logoutButtonText: { color: '#ad93c8', fontSize: 14, fontWeight: 'bold', },
+    guestMessage: { color: '#ad93c8', fontSize: 14, marginLeft: 18 }
 });

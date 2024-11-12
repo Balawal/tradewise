@@ -48,32 +48,27 @@ export default function AppNavigation() {
     
     return (
       <NavigationContainer>
-          {user ? (
-          <Stack.Navigator>
-            <Stack.Screen name="Done" component={BottomTabNavigation} options={{ headerShown: false }}/>
-            <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerStyle: {backgroundColor: '#000000', }, headerTintColor: '#ffffff', }} />
-            <Stack.Screen name="StockDetail" component={StockDetailScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="CryptoDetail" component={CryptoDetailScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
-            <Stack.Screen name="Calculator" component={CalculatorScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: false }} />
-        </Stack.Navigator>
-          ) : (
-              <Stack.Navigator initialRouteName='Welcome'>
-                  <Stack.Screen name="Welcome" options={{ headerShown: false }} component={WelcomeScreen} />
-                  <Stack.Screen name="SignUp" options={{ headerShown: false }} component={SignUpScreen} />
-                  <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
-                  <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerTitle: 'News Details' }} />
-                  <Stack.Screen name="StockDetail" options={{ headerShown: false }} component={StockDetailScreen} />
-                  <Stack.Screen name="CryptoDetail" options={{ headerShown: false }} component={CryptoDetailScreen} />
-                  <Stack.Screen name="WatchList" component={WatchListScreen} options={{headerShown: false}} />
-                  <Stack.Screen name="Calculator" options={{ headerShown: false }} component={CalculatorScreen} />
-                  <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: false }} />
-                  <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: false }} />
-              </Stack.Navigator>
-          )}
-      </NavigationContainer>
+      <Stack.Navigator>
+        {/* Allow access to Welcome, SignUp, and Login screens */}
+        {!user && (
+          <>
+            <Stack.Screen name="Welcome" options={{ headerShown: false }} component={WelcomeScreen} />
+            <Stack.Screen name="SignUp" options={{ headerShown: false }} component={SignUpScreen} />
+            <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
+          </>
+        )}
+
+        {/* Main app navigation, accessible for both authenticated and guest users */}
+        <Stack.Screen name="Done" component={BottomTabNavigation} options={{ headerShown: false }} />
+        <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerStyle: { backgroundColor: '#000000' }, headerTintColor: '#ffffff' }} />
+        <Stack.Screen name="StockDetail" component={StockDetailScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="CryptoDetail" component={CryptoDetailScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="WatchList" component={WatchListScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Calculator" component={CalculatorScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

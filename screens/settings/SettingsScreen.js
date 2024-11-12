@@ -7,13 +7,17 @@ import { useNavigation } from '@react-navigation/native';
 import useUser from '../../hooks/settings/useUser';
 import { openEmail } from '../../utils/utils';
 import { settingsScreenStyles as styles } from '../../styles/settingsStyles';
+import useAuth from '../../hooks/firebase/useAuth';
 
 const SettingsScreen = () => {
     const { user, username } = useUser();
+    const { user: authUser } = useAuth();
     const handleLogout = async() =>{
         await signOut(auth);
+        navigation.replace('Welcome');
     }
     const navigation = useNavigation();
+    const logoutContainerStyle = user ? { marginTop: 145 } : { marginTop: 410 };
 
   return (
     <View style={styles.container}>
@@ -22,8 +26,10 @@ const SettingsScreen = () => {
       </View>
       
       <Text style={styles.sectionTitle}>My account</Text>
-      
-      <View style={styles.row}>
+
+      {authUser ? (
+        <>
+          <View style={styles.row}>
         <View style={styles.rowText}>
           <Text style={styles.rowLabel}>Name</Text>
           <Text style={styles.rowValue}>{username}</Text>
@@ -48,6 +54,10 @@ const SettingsScreen = () => {
         <Text style={styles.rowLabel}>Delete Account</Text>
         <Icon name="arrow-forward-ios" size={20} color="white" />
       </TouchableOpacity>
+        </>
+      ) : (
+        <Text style={styles.guestMessage}>Sign up to access account features!</Text>
+    )}
 
       <Text style={styles.sectionTitle}>Support</Text>
 
@@ -61,7 +71,7 @@ const SettingsScreen = () => {
         <Icon name="arrow-forward-ios" size={20} color="white" />
       </TouchableOpacity>
 
-      <View style={styles.logoutContainer}>
+      <View style={[styles.logoutContainer, logoutContainerStyle]}>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Log out</Text>
         </TouchableOpacity>

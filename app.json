@@ -2,14 +2,18 @@
   "expo": {
     "name": "Tradewise",
     "slug": "tradewise",
-    "version": "1.0.2",
+    "version": "1.0.10",
     "orientation": "portrait",
     "icon": "./assets/icons/tradewise_logo.png",
     "userInterfaceStyle": "light",
     "ios": {
+      "usesAppleSignIn": true,
+      "entitlements": {
+        "com.apple.developer.applesignin": ["Default"]
+      },
       "supportsTablet": true,
       "bundleIdentifier": "com.tradewise.tradewise",
-      "buildNumber": "3",
+      "buildNumber": "11",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "LSApplicationQueriesSchemes": ["mailto"],

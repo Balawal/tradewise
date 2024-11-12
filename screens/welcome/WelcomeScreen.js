@@ -34,6 +34,14 @@ export default function WelcomeScreen() {
               <Text className="font-semibold text-[#ad93c8]"> Log In</Text>
             </TouchableOpacity>
           </View>
+          <View className="flex-row justify-center">
+            <Text className="text-white font-semibold">
+              Continue as
+            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Done')}>
+              <Text className="font-semibold text-[#ad93c8]"> Guest</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </SafeAreaView>

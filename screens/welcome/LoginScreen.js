@@ -6,6 +6,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import GoogleSignUpButton from '../../assets/icons/googleSignIn';
 import useAuthLogin from '../../hooks/welcome/useAuthLogin';
 import { LoadingIndicator } from '../../styles/components/loadingIndicator';
+import { appleAuth, AppleButton } from '@invertase/react-native-apple-authentication';
+import { getAuth, OAuthProvider, signInWithCredential } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
@@ -31,6 +35,49 @@ export default function LoginScreen() {
           'email'
         );
       };
+    
+      const onAppleButtonPress = async () => {
+        try {
+            // Perform the Apple sign-in request
+            const appleAuthRequestResponse = await appleAuth.performRequest({
+                requestedOperation: appleAuth.Operation.LOGIN,
+                requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+            });
+
+            // Ensure Apple returned a user identityToken
+            if (!appleAuthRequestResponse.identityToken) {
+                throw new Error('Apple Sign-In failed - no identity token returned');
+            }
+
+            const { identityToken, nonce, email } = appleAuthRequestResponse;
+
+            // Create an Apple credential for Firebase
+            const provider = new OAuthProvider('apple.com');
+            const credential = provider.credential({
+                idToken: identityToken,
+                rawNonce: nonce,
+            });
+
+            // Sign in with the credential
+            const auth = getAuth();
+            const userCredential = await signInWithCredential(auth, credential);
+
+            // Retrieve the name and email if they are available
+            const username = 'Loading...';
+            const userEmail = email || userCredential.user.email;
+
+            // Save the user data to Firestore
+            await setDoc(doc(db, 'users', userCredential.user.uid), {
+                username: username,
+                email: userEmail || 'Unknown',
+            });
+
+            console.log('Apple sign-in complete!');
+        } catch (error) {
+            console.log(error.message);
+            Alert.alert('Apple Sign-In Error', error.message);
+        }
+    };
 
     return(
         <View className="flex-1 bg-black">
@@ -99,7 +146,15 @@ export default function LoginScreen() {
                     Or
                 </Text>
                 <View className="flex-row justify-center space-x-12">
-                    <GoogleSignUpButton onPress={googleSignIn} label="Log in with Google"/>
+                    <GoogleSignUpButton onPress={googleSignIn} label="Sign in with Google"/>
+                </View>
+                <View className="flex-row justify-center space-x-12 mt-4">
+                    <AppleButton
+                        buttonStyle={AppleButton.Style.WHITE}
+                        buttonType={AppleButton.Type.LOG_IN}
+                        style={{ width: 160, height: 40 }}
+                        onPress={onAppleButtonPress}
+                    />
                 </View>
                 <View className="flex-row justify-center mt-14">
                         <Text className="text-gray-500 font-semibold">Don't have an account?</Text>

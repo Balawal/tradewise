@@ -39,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		69032ED12CE29CD400196DFA /* tradewise.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tradewise.entitlements; sourceTree = "<group>"; };
 		69D60D602C8B6CF20079AE7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		69EA04332C73ABE20070E269 /* tradewise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tradewise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69EA04362C73ABE20070E269 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -103,6 +104,7 @@
 		69EA04352C73ABE20070E269 /* tradewise */ = {
 			isa = PBXGroup;
 			children = (
+				69032ED12CE29CD400196DFA /* tradewise.entitlements */,
 				69D60D602C8B6CF20079AE7B /* GoogleService-Info.plist */,
 				69EA04362C73ABE20070E269 /* AppDelegate.swift */,
 				69EA04382C73ABE20070E269 /* SceneDelegate.swift */,
@@ -448,6 +450,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = tradewise/tradewise.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H84HQXU8W8;
@@ -477,6 +480,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = tradewise/tradewise.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H84HQXU8W8;

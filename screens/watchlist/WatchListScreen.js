@@ -5,10 +5,12 @@ import useWatchList from '../../hooks/watchlist/useWatchList';
 import { WatchListItem } from '../../components/watchlist/watchListItem';
 import { EmptyMessage } from '../../styles/components/emptyMessage';
 import { watchListScreenStyles as styles } from '../../styles/watchListStyles';
+import useAuth from '../../hooks/firebase/useAuth';
 
 const WatchlistScreen = () => {
   const watchList = useWatchList();
   const navigation = useNavigation();
+  const { user: authUser } = useAuth();
 
   const renderWatchListItem = ({ item }) => {
     return(
@@ -33,7 +35,11 @@ const WatchlistScreen = () => {
         data={watchList}
         keyExtractor={(item) => item.symbol}
         renderItem={renderWatchListItem}
-        ListEmptyComponent={<EmptyMessage message="Explore stocks and crypto to create your own personalized watchlist!" />}
+        ListEmptyComponent={
+          <EmptyMessage 
+            message={authUser ? "Explore stocks and crypto to create your own personalized watchlist!" : "Sign up to explore stocks and crypto and create your own personalized watchlist!"} 
+          />
+        }
         contentContainerStyle={watchList.length === 0 ? styles.emptyListContainer : styles.listContainer}
       />
     </View>
